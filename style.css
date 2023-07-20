@@ -17,6 +17,9 @@ body {
     outline: none;
     font-size: 1em;
     font-family: "Quicksand", sans-serif;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 /*
 *:focus {
@@ -27,11 +30,32 @@ body {
 #navToggle {
     outline: none;
     border: none;
+    padding: 10px;
     background-color: var(--accentColor);
     color: var(--textDarkColor);
-    padding: 10px;
     border-radius: 5px;
     font-weight: bold;
+    font-size: 1.1em;
+}
+
+#nav {
+    position: absolute;
+    /* margin-left: -15px; */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    background-color: #181317D9;
+    z-index: 10;
+}
+#nav p {
+    color: var(--textLightColor);
+    text-decoration: none;
+    font-size: 1.2em;
+    width: fit-content;
+}
+#nav p:hover {
+    cursor: pointer;
+    color: var(--accentColor);
 }
 
 #title {
@@ -46,4 +70,5 @@ video {
     min-width: 300px;
     outline: none;
     border-radius: 10px;
+    display: none;
 }
