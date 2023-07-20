@@ -11,6 +11,8 @@ const fileReader = require("fs");
 const path = require("path");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpegRequire = require("fluent-ffmpeg");
+const { dir } = require("console");
+const e = require("express");
 ffmpegRequire.setFfmpegPath(ffmpegPath);
 
 
@@ -23,6 +25,7 @@ app.get("/", (req, res) => {
 const validFileTypes = [".mp4", ".webm", ".ogg"];
 let foldersToCheck = ["./Media/"];
 let directory = [];
+let firstFolderIndex;
 
 scanForInvalidFiles();
 function scanForInvalidFiles() {
@@ -33,7 +36,6 @@ function scanForInvalidFiles() {
     }, 500);
 }
 
-// this function recursively goes through Media folder like a stack
 function parseFolder() {
     let folder = foldersToCheck[0];
     foldersToCheck.shift();
@@ -47,6 +49,8 @@ function parseFolder() {
             let parsePath = fullFilePath + "/";
 
             foldersToCheck.push(parsePath);
+            
+            directory.push("FOLDER:" + parsePath);
         }
         else {
             let fileType = path.extname(file);
@@ -58,6 +62,9 @@ function parseFolder() {
                 console.log("....FULL DIRECTORY: " + fullFilePath);
                 console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
                 console.log("--------------------");
+            }
+            else {
+                directory.push(file);
             }
         }
     });
@@ -80,5 +87,5 @@ function startServer() {
 
 // handle users
 io.on("connection", (socket) => {
-    let a = 5;
+    io.emit("sendDirectory", directory);
 });
