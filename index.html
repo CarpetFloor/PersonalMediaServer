@@ -9,16 +9,13 @@
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <img class="icon" src="Assets/NavIcon.png">
+    <button id="navToggle">Toggle Navigation Menu</button>
 
-    <p class="title">Welcome back to your personal media server!</p>
-    <div class="videoContainer">
-        <p>(You can use the 3 lines at the top to open the navigation menu)</p>
+    <p id="title">Welcome back to your personal media server!</p>
 
-        <video id="video" controls>
-            <source src="/Media/2023-06-10_15-10-52.mkv" type="video/mkv">
-        </video>
-    </div>
+    <video id="video" controls>
+        <source src="/Media/2023-06-10_15-10-52.mkv" type="video/mkv">
+    </video>
 
     <script src="script.js"></script>
 </body>

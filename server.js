@@ -21,8 +21,8 @@ app.get("/", (req, res) => {
 });
 
 const validFileTypes = [".mp4", ".webm", ".ogg"];
-
 let foldersToCheck = ["./Media/"];
+let directory = [];
 
 scanForInvalidFiles();
 function scanForInvalidFiles() {
