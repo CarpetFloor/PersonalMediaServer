@@ -1,0 +1,9 @@
+{
+    "name": "personal_media_server",
+    "version": "0.0.1",
+    "description": "Personal media server.",
+    "dependencies": {
+        "express": "^4.18.2",
+        "socket.io": "^4.7.1"
+    }
+}
