@@ -42,7 +42,7 @@ body {
     position: absolute;
     /* margin-left: -15px; */
     padding: 15px;
-    display: flex;
+    display: none;
     flex-direction: column;
     background-color: #181317D9;
     z-index: 10;
