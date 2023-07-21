@@ -18,13 +18,13 @@ function findEndIndex(startIndex, currentLevel) {
     for(let i = startIndex; i < directory.length; i++) {
         let splitted = directory[i].split("/");
 
-        if((splitted.length > currentLevel) || (i == directory.length - 1)) {
+        if((splitted.length > currentLevel)) {
             return i;
         }
     }
 }
 
-function setupDirectory() {
+function setupDirectoryOriginal() {
     // starts at 2 because Media has 2 slashes: ./Media/, meaning that there are 3 parts when split by "/"
     let currentLevel = 3;
     let elem = navRef;
@@ -48,12 +48,14 @@ function setupDirectory() {
         ++currentLevel;
         startIndex = endIndex;
         endIndex = findEndIndex(startIndex, currentLevel);
-
-        // console.log(currentLevel, endIndex);
         
         for(let i = startIndex; i < (endIndex + 1); i++) {
             let folderSplitted = directory[i].split("/");
             let folderName = folderSplitted[currentLevel - 2];
+            console.log("CURRENT_LEVEL ", currentLevel);
+            console.log("DIRECTORY[I] ", directory[i]);
+            console.log("FOLDER_NAME ", folderName);
+            console.log("--------------------");
 
             if(!(foldersCreated.includes(folderName))) {
                 foldersCreated.push(folderName);
@@ -67,37 +69,84 @@ function setupDirectory() {
                     
                     addDiv(parent, folderName, currentLevel);
                 }
-
-                let temp = elem.childNodes;
-                addFileToDiv(temp[temp.length - 1], folderSplitted[currentLevel - 1], currentLevel);
             }
         }
 
     }
+}
 
-    console.log("second part");
+function setupDirectory() {
+    let foldersCreated = [];
+
+    for(let i = 0; i < directory.length; i++) {
+        let splitted = directory[i].split("/");
+        let folderName = splitted[splitted.length - 2];
+        let fileName = splitted[splitted.length - 1];
+
+        if(folderName != "Media") {
+
+            if(!(foldersCreated.includes(folderName))) {
+                foldersCreated.push(folderName);
+
+                if(splitted[splitted.length - 3] != "Media") {
+                    let rootFolderElem = findRootFolderElem(splitted);
+    
+                    addDiv(rootFolderElem, folderName, splitted.length - 3);
+                }
+                else {
+                    addDiv(navRef, folderName, 1);
+                }
+            }
+        }
+        else {
+            addFileToDiv(navRef, fileName, 1);
+        }
+    }
+}
+
+function findRootFolderElem(splitted) {
+    let rootFolderName = splitted[splitted.length - 3];
+    let index = 0;
+    let elem = navRef;
+    let children = elem.childNodes;
+
+    while(index < (splitted.length - 1)) {
+        ++index;
+
+        for(let i = 0; i < (children.length - 1); i++) {
+            if(children[i].nodeName == "DIV") {
+                let folderNameCheck = children[i].childNodes[0].innerText;
+
+                if(folderNameCheck = rootFolderName) {
+                    return children[i];
+                }
+                else if(splitted.includes(folderNameCheck)) {
+                    elem = children[i];
+                    children = elem.childNodes;
+
+                    break;
+                }
+            }
+        }
+    }
 }
 
 function findParent(splitted) {
-    console.log("FINDING PARENT OF ", splitted);
     let folderName = splitted[splitted.length - 3];
-    console.log("FOLDER NAME IS ", folderName);
 
     let element = navRef;
     let count = 0;
     
-    while(count < 10) {
+    /**This function should find something, and so one iteration of the while loop should cause a return.
+     * But just in case something goes wrong, don't get stuck in an infinte loop.
+     */
+    while(count < 50) {
         ++count;
-        console.log("attempt ", count);
 
         let children = element.childNodes;
-        console.log("element", element);
-        console.log("children ", children);
 
         for(let i = 0; i < children.length; i++) {
             if(children[i].nodeName == "DIV") {
-                console.log("LOOKING AT ", children[i].children[0].innerText);
-
                 // p element of div that represents the folder name
                 if(children[i].children[0].innerText == folderName) {
                     return children[i];
@@ -110,23 +159,22 @@ function findParent(splitted) {
     
             }
         }
-
-        console.log("--------------------");
     }
 }
 
+const INDENT_SIZE = 20;
 function addDiv(parent, name, currentLevel) {
     let div = document.createElement("div");
     div.style.flexDirection = "column";
-    div.style.textIndent = ((currentLevel - 4) * 10) + "px";
+    div.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
     
     let title = document.createElement("p");
     title.innerText = name;
     title.style.fontWeight = "bold";
-    title.style.textIndent = ((currentLevel - 4) * 10) + "px";
+    title.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
     title.addEventListener("click", function(){toggleFolder(this.parentNode)});
     
-    if(currentLevel == 4) {
+    if(currentLevel == 1) {
         div.style.display = "flex";
     }
     else {
@@ -142,9 +190,12 @@ function addDiv(parent, name, currentLevel) {
 function addFileToDiv(div, name, currentLevel) {
     let file = document.createElement("p");
     file.innerText = name;
-    file.style.textIndent = ((currentLevel - 1) * 10) + "px";
-    file.style.display = "none";
-
+    file.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
+    
+    if(currentLevel != 1) {
+        file.style.display = "none";
+    }
+    
     div.appendChild(file);
 }
 
