@@ -48,20 +48,25 @@ function setupDirectory() {
         ++currentLevel;
         startIndex = endIndex;
         endIndex = findEndIndex(startIndex, currentLevel);
-        console.log(currentLevel, endIndex);
+
+        // console.log(currentLevel, endIndex);
         
         for(let i = startIndex; i < (endIndex + 1); i++) {
             let folderSplitted = directory[i].split("/");
             let folderName = folderSplitted[currentLevel - 2];
 
-            console.log(folderSplitted);
-
             if(!(foldersCreated.includes(folderName))) {
                 foldersCreated.push(folderName);
 
-                let parent = findParent(folderSplitted);
-
-                addDiv(parent, folderName);
+                let parent;
+                if(currentLevel == 4) {
+                    addDiv(elem, folderName, currentLevel);
+                }
+                else {
+                    parent = findParent(folderSplitted);
+                    
+                    addDiv(parent, folderName, currentLevel);
+                }
 
                 let temp = elem.childNodes;
                 addFileToDiv(temp[temp.length - 1], folderSplitted[currentLevel - 1], currentLevel);
@@ -74,17 +79,25 @@ function setupDirectory() {
 }
 
 function findParent(splitted) {
-    let folderName = splitted[splitted.length - 2];
+    console.log("FINDING PARENT OF ", splitted);
+    let folderName = splitted[splitted.length - 3];
+    console.log("FOLDER NAME IS ", folderName);
 
     let element = navRef;
     let count = 0;
     
     while(count < 10) {
         ++count;
+        console.log("attempt ", count);
+
         let children = element.childNodes;
-    
+        console.log("element", element);
+        console.log("children ", children);
+
         for(let i = 0; i < children.length; i++) {
             if(children[i].nodeName == "DIV") {
+                console.log("LOOKING AT ", children[i].children[0].innerText);
+
                 // p element of div that represents the folder name
                 if(children[i].children[0].innerText == folderName) {
                     return children[i];
@@ -97,18 +110,29 @@ function findParent(splitted) {
     
             }
         }
+
+        console.log("--------------------");
     }
 }
 
-function addDiv(parent, name) {
+function addDiv(parent, name, currentLevel) {
     let div = document.createElement("div");
-    div.style.display = "flex";
     div.style.flexDirection = "column";
+    div.style.textIndent = ((currentLevel - 4) * 10) + "px";
     
     let title = document.createElement("p");
     title.innerText = name;
     title.style.fontWeight = "bold";
+    title.style.textIndent = ((currentLevel - 4) * 10) + "px";
     title.addEventListener("click", function(){toggleFolder(this.parentNode)});
+    
+    if(currentLevel == 4) {
+        div.style.display = "flex";
+    }
+    else {
+        div.style.display = "none";
+        title.style.display = "none";
+    }
     
     div.appendChild(title);
 
@@ -143,15 +167,24 @@ function toggleFolder(elem) {
 
     let test = window.getComputedStyle(last).display;
     let update = "-1";
+    let divUpdate = "-1";
 
     if(test == "none") {
         update = "block";
+        divUpdate = "flex";
     }
     else {
         update = "none";
+        divUpdate = update;
     }
 
     for(let i = 1; i < children.length; i++) {
-        children[i].style.display = update;
+        if(children[i].nodeName == "DIV") {
+            children[i].style.display = divUpdate;
+            children[i].children[0].style.display = update;
+        } 
+        else {
+            children[i].style.display = update;
+        }
     }
 }
