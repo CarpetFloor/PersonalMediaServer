@@ -50,21 +50,23 @@ function parseFolder() {
 
             foldersToCheck.push(parsePath);
             
-            directory.push("FOLDER:" + parsePath);
+            // directory.push("FOLDER:" + parsePath);
         }
         else {
             let fileType = path.extname(file);
 
             if(!(validFileTypes.includes(fileType))) {
-                console.log("\nUNSUPORTED FILE FOUND (will be excluded from server directory)");
-                console.log("....NAME: " + file);
-                console.log("....IN FOLDER: " + folder);
-                console.log("....FULL DIRECTORY: " + fullFilePath);
-                console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
-                console.log("--------------------");
+                if(file != ".gitignore") {
+                    console.log("\nUNSUPORTED FILE FOUND (will be excluded from server directory)");
+                    console.log("....NAME: " + file);
+                    console.log("....IN FOLDER: " + folder);
+                    console.log("....FULL DIRECTORY: " + fullFilePath);
+                    console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
+                    console.log("--------------------");
+                }
             }
             else {
-                directory.push(file);
+                directory.push(fullFilePath);
             }
         }
     });
