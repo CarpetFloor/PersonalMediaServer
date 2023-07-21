@@ -23,22 +23,31 @@ function setupDirectory() {
         let fileName = splitted[splitted.length - 1];
 
         if(folderName != "Media") {
-
+            let parentFolder = document.getElementById(splitted[splitted.length - 3])
+            
+            // the file is in a folder that does not yet exist
             if(!(foldersCreated.includes(folderName))) {
                 foldersCreated.push(folderName);
 
                 if(splitted[splitted.length - 3] != "Media") {
-                    let parentFolder = document.getElementById(splitted[splitted.length - 3])
                         
                     addDiv(parentFolder, folderName, splitted.length - 3);
+                    addFileToDiv(parentFolder, fileName, splitted.length - 3);
                 }
                 else {
                     addDiv(navRef, folderName, 1);
+                    addFileToDiv(navRef, fileName, 1);
                 }
+            }
+            else {
+                addFileToDiv(parentFolder, fileName, splitted.length - 3);
             }
         }
         else {
-            addFileToDiv(navRef, fileName, 1);
+            addFileToDiv(navRef, fileName, 0);
+
+            let children = navRef.childNodes;
+            children[children.length - 1].style.display = "block";
         }
     }
 }
@@ -73,11 +82,8 @@ function addDiv(parent, name, currentLevel) {
 function addFileToDiv(div, name, currentLevel) {
     let file = document.createElement("p");
     file.innerText = name;
-    file.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
-    
-    if(currentLevel != 1) {
-        file.style.display = "none";
-    }
+    file.style.textIndent = (currentLevel * INDENT_SIZE) + "px";
+    file.style.display = "none";
     
     div.appendChild(file);
 }
@@ -96,10 +102,20 @@ function toggleNavMenu() {
 }
 
 function toggleFolder(elem) {
+    console.log("TOGGLING ", elem);
     let children = elem.childNodes;
-    let last = children[children.length - 1];
+    console.log("CHILDREN ", children);
+    
+    let index = 1;
+    let firstActualChild = children[1];
+    while(firstActualChild.nodeName == "DIV") {
+        ++index;
+        firstActualChild = children[index];
+    }
+    
+    console.log("FIRST_ACTUAL ", firstActualChild);
 
-    let test = window.getComputedStyle(last).display;
+    let test = window.getComputedStyle(firstActualChild).display;
     let update = "-1";
     let divUpdate = "-1";
 
