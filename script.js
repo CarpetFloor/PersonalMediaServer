@@ -89,9 +89,9 @@ function setupDirectory() {
                 foldersCreated.push(folderName);
 
                 if(splitted[splitted.length - 3] != "Media") {
-                    let rootFolderElem = findRootFolderElem(splitted);
-    
-                    addDiv(rootFolderElem, folderName, splitted.length - 3);
+                    let parentFolder = document.getElementById(splitted[splitted.length - 3])
+                        
+                    addDiv(parentFolder, folderName, splitted.length - 3);
                 }
                 else {
                     addDiv(navRef, folderName, 1);
@@ -100,33 +100,6 @@ function setupDirectory() {
         }
         else {
             addFileToDiv(navRef, fileName, 1);
-        }
-    }
-}
-
-function findRootFolderElem(splitted) {
-    let rootFolderName = splitted[splitted.length - 3];
-    let index = 0;
-    let elem = navRef;
-    let children = elem.childNodes;
-
-    while(index < (splitted.length - 1)) {
-        ++index;
-
-        for(let i = 0; i < (children.length - 1); i++) {
-            if(children[i].nodeName == "DIV") {
-                let folderNameCheck = children[i].childNodes[0].innerText;
-
-                if(folderNameCheck = rootFolderName) {
-                    return children[i];
-                }
-                else if(splitted.includes(folderNameCheck)) {
-                    elem = children[i];
-                    children = elem.childNodes;
-
-                    break;
-                }
-            }
         }
     }
 }
@@ -165,6 +138,7 @@ function findParent(splitted) {
 const INDENT_SIZE = 20;
 function addDiv(parent, name, currentLevel) {
     let div = document.createElement("div");
+    div.id = name;
     div.style.flexDirection = "column";
     div.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
     
