@@ -68,6 +68,10 @@ body {
 #nav .folderName:hover {
     color: var(--secondAccentColor);
 }
+#nav .icon {
+    width: 1em;
+    margin-right: 0.25em;
+}
 
 #title {
     font-size: 2.5em;

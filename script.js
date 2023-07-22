@@ -67,9 +67,16 @@ function addDiv(parent, name, currentLevel) {
     // p element that will be the folder name
     let title = document.createElement("p");
     title.classList.add("folderName");
-    title.innerText = name;
     title.style.fontWeight = "normal";
     title.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
+    
+    let icon = document.createElement("img");
+    icon.classList.add("icon");
+    icon.src = "Assets/folderIcon.svg";
+    title.appendChild(icon);
+    
+    title.innerHTML += name;
+    
     title.addEventListener("click", function(){toggleFolder(this.parentNode)});
     
     if(currentLevel == 1) {
@@ -92,9 +99,15 @@ function addFileToDiv(div, name, currentLevel) {
     let nameSplitted = name.split(".");
 
     let file = document.createElement("p");
-    file.innerText = nameSplitted[0];
     file.style.textIndent = (currentLevel * INDENT_SIZE) + "px";
     file.style.display = "none";
+    
+    let icon = document.createElement("img");
+    icon.classList.add("icon");
+    icon.src = "Assets/fileIcon.svg";
+    file.appendChild(icon);
+    
+    file.innerHTML += nameSplitted[0];
     
     div.appendChild(file);
 }
