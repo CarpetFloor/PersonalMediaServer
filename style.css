@@ -6,6 +6,7 @@
     --textDarkColor: #122020;
     --accentColorLight: #249fde;
     --accentColorDark: #285cc4;
+    --secondAccentColor: #f9a31b;
 }
 
 body {
@@ -60,7 +61,10 @@ body {
 }
 #nav p:hover {
     cursor: pointer;
-    color: var(--accentColor);
+    color: var(--accentColorLight);
+}
+#nav .folderName:hover {
+    color: var(--secondAccentColor);
 }
 
 #title {
@@ -75,5 +79,5 @@ video {
     min-width: 300px;
     outline: none;
     border-radius: 10px;
-    display: none;
+    display: block;
 }

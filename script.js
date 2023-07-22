@@ -55,12 +55,15 @@ function setupDirectory() {
 const INDENT_SIZE = 20;
 
 function addDiv(parent, name, currentLevel) {
+    // div for the folder itself
     let div = document.createElement("div");
     div.id = name;
     div.style.flexDirection = "column";
     div.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
     
+    // p element that will be the folder name
     let title = document.createElement("p");
+    title.classList.add("folderName");
     title.innerText = name;
     title.style.fontWeight = "bold";
     title.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
@@ -102,6 +105,11 @@ function toggleNavMenu() {
 }
 
 function toggleFolder(elem) {
+    console.log("TOGGLING ", elem.innerText);
+    let children = elem.childNodes;
+}
+
+function toggleFolderOriginal(elem) {
     console.log("TOGGLING ", elem);
     let children = elem.childNodes;
     console.log("CHILDREN ", children);
