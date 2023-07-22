@@ -68,7 +68,7 @@ function addDiv(parent, name, currentLevel) {
     let title = document.createElement("p");
     title.classList.add("folderName");
     title.innerText = name;
-    title.style.fontWeight = "bold";
+    title.style.fontWeight = "normal";
     title.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
     title.addEventListener("click", function(){toggleFolder(this.parentNode)});
     
@@ -88,8 +88,11 @@ function addDiv(parent, name, currentLevel) {
 }
 
 function addFileToDiv(div, name, currentLevel) {
+    // the name passed to this function has the filetype, so remove it for display
+    let nameSplitted = name.split(".");
+
     let file = document.createElement("p");
-    file.innerText = name;
+    file.innerText = nameSplitted[0];
     file.style.textIndent = (currentLevel * INDENT_SIZE) + "px";
     file.style.display = "none";
     
