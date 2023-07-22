@@ -106,9 +106,13 @@ function toggleNavMenu() {
 
     if(navOpen) {
         navRef.style.display = "flex";
+
+        document.getElementById("navToggle").innerText = "Close Directory";
     }
     else {
         navRef.style.display = "none";
+
+        document.getElementById("navToggle").innerText = "Open Directory";
     }
 }
 
