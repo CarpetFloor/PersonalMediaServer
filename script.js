@@ -23,24 +23,27 @@ function setupDirectory() {
         let fileName = splitted[splitted.length - 1];
 
         if(folderName != "Media") {
-            let parentFolder = document.getElementById(splitted[splitted.length - 3])
+            let parentFolder = document.getElementById(splitted[splitted.length - 3]);
             
             // the file is in a folder that does not yet exist
             if(!(foldersCreated.includes(folderName))) {
                 foldersCreated.push(folderName);
 
                 if(splitted[splitted.length - 3] != "Media") {
-                        
-                    addDiv(parentFolder, folderName, splitted.length - 3);
-                    addFileToDiv(parentFolder, fileName, splitted.length - 3);
+                    let newDiv = addDiv(parentFolder, folderName, splitted.length - 3);
+
+                    addFileToDiv(newDiv, fileName, splitted.length - 3);
                 }
                 else {
-                    addDiv(navRef, folderName, 1);
-                    addFileToDiv(navRef, fileName, 1);
+                    let newDiv = addDiv(navRef, folderName, 1);
+
+                    addFileToDiv(newDiv, fileName, 1);
                 }
             }
             else {
-                addFileToDiv(parentFolder, fileName, splitted.length - 3);
+                let divFolder = document.getElementById(splitted[splitted.length - 2]);
+
+                addFileToDiv(divFolder, fileName, splitted.length - 3);
             }
         }
         else {
@@ -80,6 +83,8 @@ function addDiv(parent, name, currentLevel) {
     div.appendChild(title);
 
     parent.appendChild(div);
+
+    return div;
 }
 
 function addFileToDiv(div, name, currentLevel) {
@@ -105,14 +110,7 @@ function toggleNavMenu() {
 }
 
 function toggleFolder(elem) {
-    console.log("TOGGLING ", elem.innerText);
     let children = elem.childNodes;
-}
-
-function toggleFolderOriginal(elem) {
-    console.log("TOGGLING ", elem);
-    let children = elem.childNodes;
-    console.log("CHILDREN ", children);
     
     let index = 1;
     let firstActualChild = children[1];
@@ -120,8 +118,6 @@ function toggleFolderOriginal(elem) {
         ++index;
         firstActualChild = children[index];
     }
-    
-    console.log("FIRST_ACTUAL ", firstActualChild);
 
     let test = window.getComputedStyle(firstActualChild).display;
     let update = "-1";
