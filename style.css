@@ -4,7 +4,8 @@
     --backgroundColor: #242234;
     --textLightColor: #dae0ea;
     --textDarkColor: #122020;
-    --accentColor: #249fde;
+    --accentColorLight: #249fde;
+    --accentColorDark: #285cc4;
 }
 
 body {
@@ -31,11 +32,15 @@ body {
     outline: none;
     border: none;
     padding: 10px;
-    background-color: var(--accentColor);
+    background-color: var(--accentColorLight);
     color: var(--textDarkColor);
     border-radius: 5px;
     font-weight: bold;
     font-size: 1.1em;
+}
+#navToggle:hover {
+    cursor: pointer;
+    filter: brightness(0.9);
 }
 
 #nav {
