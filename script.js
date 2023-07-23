@@ -6,13 +6,12 @@ let directory = [];
 
 socket.on("sendDirectory", function(receivingDirectory) {
     directory = receivingDirectory;
-    console.log(directory);
     
     navRef = document.getElementById("nav");
     setupDirectory();
 
     document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
-})
+});
 
 function setupDirectory() {
     let foldersCreated = [];
@@ -32,22 +31,22 @@ function setupDirectory() {
                 if(splitted[splitted.length - 3] != "Media") {
                     let newDiv = addDiv(parentFolder, folderName, splitted.length - 3);
 
-                    addFileToDiv(newDiv, fileName, splitted.length - 3);
+                    addFileToDiv(newDiv, fileName, splitted.length - 3, directory[i]);
                 }
                 else {
                     let newDiv = addDiv(navRef, folderName, 1);
 
-                    addFileToDiv(newDiv, fileName, 1);
+                    addFileToDiv(newDiv, fileName, 1, directory[i]);
                 }
             }
             else {
                 let divFolder = document.getElementById(splitted[splitted.length - 2]);
 
-                addFileToDiv(divFolder, fileName, splitted.length - 3);
+                addFileToDiv(divFolder, fileName, splitted.length - 3, directory[i]);
             }
         }
         else {
-            addFileToDiv(navRef, fileName, 0);
+            addFileToDiv(navRef, fileName, 0, directory[i]);
 
             let children = navRef.childNodes;
             children[children.length - 1].style.display = "block";
@@ -77,7 +76,7 @@ function addDiv(parent, name, currentLevel) {
     
     title.innerHTML += name;
     
-    title.addEventListener("click", function(){toggleFolder(this.parentNode)});
+    title.addEventListener("click", function(){toggleFolder(this.parentNode);});
     
     if(currentLevel == 1) {
         div.style.display = "flex";
@@ -94,7 +93,7 @@ function addDiv(parent, name, currentLevel) {
     return div;
 }
 
-function addFileToDiv(div, name, currentLevel) {
+function addFileToDiv(div, name, currentLevel, fullFilePath) {
     // the name passed to this function has the filetype, so remove it for display
     let nameSplitted = name.split(".");
 
@@ -108,6 +107,10 @@ function addFileToDiv(div, name, currentLevel) {
     file.appendChild(icon);
     
     file.innerHTML += nameSplitted[0];
+
+    file.addEventListener("click", function(){
+        socket.emit("requestFile", fullFilePath);
+    });
     
     div.appendChild(file);
 }
@@ -162,3 +165,8 @@ function toggleFolder(elem) {
         }
     }
 }
+
+socket.on("sendFile", function(fullFilePath) {
+    console.log("RECIEVED VIDEO");
+    console.log(fullFilePath);
+});
