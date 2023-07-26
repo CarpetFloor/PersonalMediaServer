@@ -1,8 +1,5 @@
 let socket = io();
-
 let videoOpened = localStorage.getItem("videoOpened");
-// console.log(videoOpened);
-
 let navOpen = false;
 let navRef;
 let directory = [];
@@ -134,46 +131,13 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 
         socket.emit("requestFile", fullFilePath);
 
-        // window.setTimeout(function(){
-        //     let videoRef = document.getElementById("video");
-
-        //     if(openedVideo) {
-        //         videoRef.pause();
-        //         videoRef.removeAttribute("src");
-        //         videoRef.load();
-
-        //         videoRef.src = "/videoPlayer";
-        //     }
-        //     else {
-        //         openedVideo = true;
-
-        //         videoRef.src = "/videoPlayer";
-        //     }
-        // }, 500);
-        
-        // window.setTimeout(function() {
-        //     let videoElem = document.createElement("video");
-            
-        //     videoElem.id = "video";
-        //     videoElem.controls = true;
-        //     videoElem.style.display = "block";
-        //     videoElem.src = "/videoPlayer";
-
-        //     document.body.appendChild(videoElem);
-            
-        //     document.getElementById("video").oncanplay = function() {
-        //         document.getElementById("title").innerText = videoName;
-                
-        //         document.getElementById("video").load();
-        //     }
-        // }, 200);
-
         window.setTimeout(function(){
             localStorage.setItem("videoOpened", "yes");
 
             let address = window.location;
             window.open(address);
-        }, 500);
+            close();
+        }, 10);
     });
     
     div.appendChild(file);

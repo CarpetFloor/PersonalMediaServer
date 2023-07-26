@@ -15,10 +15,6 @@ const { dir } = require("console");
 const e = require("express");
 ffmpegRequire.setFfmpegPath(ffmpegPath);
 
-// for sending client video
-// const Blob = require("node-blob");
-
-let resRef;
 // add static file(s)
 app.use(express.static(__dirname));
 app.get("/", (req, res) => {
@@ -29,7 +25,6 @@ app.get("/", (req, res) => {
 const validFileTypes = [".mp4", ".webm", ".ogg"];
 let foldersToCheck = ["./Media/"];
 let directory = [];
-let firstFolderIndex;
 
 function scanForInvalidFiles() {
     console.log("\n\nScanning Media folder for unsopported files...");
@@ -83,7 +78,6 @@ function parseFolder() {
 scanForInvalidFiles();
 
 let port = 3000;
-let hostName = "test";
 
 function startServer() {
     // start server
@@ -106,51 +100,14 @@ io.on("connection", (socket) => {
 let fullFilePath = "file";
 let fileType = "type";
 /**
- * Lots of help from: https://www.geeksforgeeks.org/how-to-build-video-streaming-application-using-node-js/#
+ * Lots of help from: https://github.com/Nitij/node-video-stream/tree/main
  */
-// app.get("/videoPlayer", (req, res) => {
-//     const range = req.headers.range
-//     // console.log("RANGE ", range);
-//     const videoPath = fullFilePath;
-//     // console.log("VIDEO_PATH ", videoPath);
-//     const videoSize = fileReader.statSync(videoPath).size;
-//     // console.log("VIDEO_SIZE ", videoSize);
-//     const chunkSize = 1 * 1e6;
-//     // console.log("CHUNK_SIZE ", chunkSize);
-//     const start = Number(range.replace(/\D/g, ""));
-//     // console.log("START ", start);
-//     const end = Math.min(start + chunkSize, videoSize - 1);
-//     // console.log("END ", end);
-//     const contentLength = end - start + 1;
-//     // console.log("CONTENT_LENGTH ", contentLength);
-//     const headers = {
-//         "Content-Range": `bytes ${start}-${end}/${videoSize}`,
-//         "Accept-Ranges": "bytes",
-//         "Content-Length": contentLength,
-//         "Content-Type": fileType
-//     };
-//     // console.log("HEADERS ", headers);
-//     // console.log("--------------------");
-//     // console.log("--------------------");
-
-//     res.writeHead(206, headers);
-    
-//     const stream = fileReader.createReadStream(videoPath, {
-//         start,
-//         end
-//     });
-    
-//     stream.pipe(res);
-// });
-app.get('/videoPlayer', (req, res)=>{
+app.get("/videoPlayer", (req, res)=>{
     const filePath = fullFilePath;
     const stat = fileReader.statSync(filePath);
     const fileSize = stat.size;
     const range = req.headers.range;
     
-    console.log(fullFilePath);
-    console.log(range);
-    console.log("--------------------");
     if(range){
         const parts = range.replace(/bytes=/, "").split("-");
         const start = parseInt(parts[0], 10);
@@ -159,10 +116,10 @@ app.get('/videoPlayer', (req, res)=>{
         const file = fileReader.createReadStream(filePath, {start, end});
 
         const head = {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunksize,
-            'Content-Type': fileType
+            "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+            "Accept-Ranges": "bytes",
+            "Content-Length": chunksize,
+            "Content-Type": fileType
         };
 
         res.writeHead(206, head);
@@ -170,8 +127,8 @@ app.get('/videoPlayer', (req, res)=>{
     }
     else{
         const head = {
-            'Content-Length': fileSize,
-            'Content-Type': fileType
+            "Content-Length": fileSize,
+            "Content-Type": fileType
         };
 
         res.writeHead(200, head);
