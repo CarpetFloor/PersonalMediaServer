@@ -3,6 +3,7 @@ let videoOpened = false;
 let navOpen = false;
 let navRef;
 let directory = [];
+let checkIfVideoCanPlayInterval;
 
 socket.on("sendDirectory", function(receivingDirectory) {
     directory = receivingDirectory;
@@ -108,8 +109,30 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     
     file.innerHTML += nameSplitted[0];
 
+    let videoName = nameSplitted[0];
+
     file.addEventListener("click", function(){
+        toggleNavMenu();
+
+        document.getElementById("title").innerText = "Getting Video...";
+        
+        let videoRef = document.getElementById("video");
+        videoRef.style.display = "block";
+        
+        // clear current src
+        // videoRef.src = "";
+
         socket.emit("requestFile", fullFilePath);
+        
+        window.setTimeout(function() {
+            document.getElementById("video").src = "/videoPlayer";
+            
+            document.getElementById("video").oncanplay = function() {
+                document.getElementById("title").innerText = videoName;
+                
+                // document.getElementById("video").load();
+            }
+        }, 200);
     });
     
     div.appendChild(file);
@@ -165,8 +188,3 @@ function toggleFolder(elem) {
         }
     }
 }
-
-socket.on("sendFile", function(fullFilePath) {
-    console.log("RECIEVED VIDEO");
-    console.log(fullFilePath);
-});
