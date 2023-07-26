@@ -18,7 +18,6 @@ ffmpegRequire.setFfmpegPath(ffmpegPath);
 // add static file(s)
 app.use(express.static(__dirname));
 app.get("/", (req, res) => {
-    resRef = res;
     res.sendFile(__dirname + "/firstOpen.html");
 });
 

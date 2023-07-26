@@ -134,8 +134,8 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
         window.setTimeout(function(){
             localStorage.setItem("videoOpened", "yes");
 
-            let address = window.location;
-            window.open(address);
+            // let address = window.location;
+            window.open("actualindex.html");
             window.close();
         }, 10);
     });
