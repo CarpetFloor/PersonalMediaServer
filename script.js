@@ -1,5 +1,8 @@
 let socket = io();
-let videoOpened = false;
+
+let videoOpened = localStorage.getItem("videoOpened");
+// console.log(videoOpened);
+
 let navOpen = false;
 let navRef;
 let directory = [];
@@ -52,6 +55,16 @@ function setupDirectory() {
             let children = navRef.childNodes;
             children[children.length - 1].style.display = "block";
         }
+    }
+
+    checkIfNeedToPlayVideo();
+}
+
+function checkIfNeedToPlayVideo() {
+    if(videoOpened == "yes") {
+        localStorage.setItem("videoOpened", "no");
+
+        document.getElementById("video").src = "/videoPlayer";
     }
 }
 
@@ -112,27 +125,55 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     let videoName = nameSplitted[0];
 
     file.addEventListener("click", function(){
+        // // remove current video
+        document.getElementById("video").remove();
+
         toggleNavMenu();
 
         document.getElementById("title").innerText = "Getting Video...";
-        
-        let videoRef = document.getElementById("video");
-        videoRef.style.display = "block";
-        
-        // clear current src
-        // videoRef.src = "";
 
         socket.emit("requestFile", fullFilePath);
+
+        // window.setTimeout(function(){
+        //     let videoRef = document.getElementById("video");
+
+        //     if(openedVideo) {
+        //         videoRef.pause();
+        //         videoRef.removeAttribute("src");
+        //         videoRef.load();
+
+        //         videoRef.src = "/videoPlayer";
+        //     }
+        //     else {
+        //         openedVideo = true;
+
+        //         videoRef.src = "/videoPlayer";
+        //     }
+        // }, 500);
         
-        window.setTimeout(function() {
-            document.getElementById("video").src = "/videoPlayer";
+        // window.setTimeout(function() {
+        //     let videoElem = document.createElement("video");
             
-            document.getElementById("video").oncanplay = function() {
-                document.getElementById("title").innerText = videoName;
+        //     videoElem.id = "video";
+        //     videoElem.controls = true;
+        //     videoElem.style.display = "block";
+        //     videoElem.src = "/videoPlayer";
+
+        //     document.body.appendChild(videoElem);
+            
+        //     document.getElementById("video").oncanplay = function() {
+        //         document.getElementById("title").innerText = videoName;
                 
-                // document.getElementById("video").load();
-            }
-        }, 200);
+        //         document.getElementById("video").load();
+        //     }
+        // }, 200);
+
+        window.setTimeout(function(){
+            localStorage.setItem("videoOpened", "yes");
+
+            let address = window.location;
+            window.open(address);
+        }, 500);
     });
     
     div.appendChild(file);
