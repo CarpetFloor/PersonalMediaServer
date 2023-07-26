@@ -136,7 +136,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 
             let address = window.location;
             window.open(address);
-            close();
+            window.close();
         }, 10);
     });
     

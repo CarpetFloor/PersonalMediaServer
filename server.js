@@ -19,7 +19,7 @@ ffmpegRequire.setFfmpegPath(ffmpegPath);
 app.use(express.static(__dirname));
 app.get("/", (req, res) => {
     resRef = res;
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname + "/firstOpen.html");
 });
 
 const validFileTypes = [".mp4", ".webm", ".ogg"];
