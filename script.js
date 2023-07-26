@@ -61,7 +61,11 @@ function checkIfNeedToPlayVideo() {
     if(videoOpened == "yes") {
         localStorage.setItem("videoOpened", "no");
 
-        document.getElementById("video").src = "/videoPlayer";
+        document.getElementById("title").innerText = localStorage.getItem("videoName");
+
+        let videoRef = document.getElementById("video");
+        videoRef.style.display = "block";
+        videoRef.src = "/videoPlayer";
     }
 }
 
@@ -119,9 +123,9 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     
     file.innerHTML += nameSplitted[0];
 
-    let videoName = nameSplitted[0];
-
     file.addEventListener("click", function(){
+        let videoName = (file.innerText.split("."))[0];
+        localStorage.setItem("videoName", videoName);
         // // remove current video
         document.getElementById("video").remove();
 
