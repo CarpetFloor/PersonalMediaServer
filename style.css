@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
 
 :root {
     --backgroundColor: #242234;
@@ -19,9 +19,10 @@ body {
     outline: none;
     font-size: 1em;
     font-family: "Quicksand", sans-serif;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+}
+::selection {
+    background: #000000;
+    color: white;
 }
 /*
 *:focus {
@@ -50,8 +51,11 @@ body {
     padding: 15px;
     display: none;
     flex-direction: column;
-    background-color: #181317D9;
+    background-color: #181317e0;
     z-index: 10;
+    width: 93vw;
+    height: 80vh;
+    overflow: auto;
 }
 #nav p {
     color: var(--textLightColor);
@@ -81,8 +85,10 @@ body {
 }
 
 video {
-    width: 55vw;
-    min-width: 300px;
+    /* max-width: 55vw;
+    min-width: 300px; */
+    min-width: 20vw;
+    max-width: 60vw;
     outline: none;
     border-radius: 10px;
     display: none;

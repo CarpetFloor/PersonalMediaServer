@@ -1,0 +1,19 @@
+Server
+    -Display where server is running at 
+    -Add proper way to close shutdown server
+    -Add server GUI for:
+        >Installing dependencies
+        >Starting server
+        >Stopping server
+        >Going to Media directory
+        >Showing unsupported files in Media directory
+    -Allow server Media directory to be modified without having to restart server
+
+Client
+-Fix having to open unnecessary window at start
+-Add support mkv videos
+-Add support for photos
+-Animations
+-Skeleton loading
+-Display more on homepage
+-Mobile support

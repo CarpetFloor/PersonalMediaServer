@@ -12,7 +12,7 @@ Controlling the server:
     -To stop the server, close out of the terminal window that opened up when you double-clicked "startServer.bat".
 
 Configuring custom domain(s):
-    -In order to use a custom domain to access your personal media server, you have to configure it in the steps listed here
+    -In order to use a custom domain for THE SERVER COMPUTER ONLY to access your personal media server, you have to configure it in the steps listed here
     -Go to Windows\System32\drivers\etc\hosts and add 127.0.0.1 [your domain here]
     -You can add as many domains as you want, just make a new line in the same format as noted in the above line
     -To access your personal media server using a new domain, you have to add ":3000" after the domain in the address bar because the server runs on port 3000. For instance, if you used the doman exampledomain, to access your personal web server, you would have to go to exampledomain:3000 in the browser.
