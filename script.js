@@ -112,24 +112,10 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     file.innerHTML += name;
 
     file.addEventListener("click", function(){
-        let videoName = (file.innerText.split("."))[0];
-        localStorage.setItem("videoName", videoName);
-        // // remove current video
-        document.getElementById("video").remove();
-
+        document.querySelector("video").style.display = "none";
         toggleNavMenu();
-
-        document.getElementById("title").innerText = "Getting Video...";
-
-        socket.emit("requestFile", fullFilePath);
-
-        window.setTimeout(function(){
-            localStorage.setItem("videoOpened", "yes");
-
-            // let address = window.location;
-            window.open("actualindex.html");
-            window.close();
-        }, 10);
+        document.querySelector("video").src = fullFilePath.slice(2);
+        document.querySelector("video").style.display = "flex";
     });
     
     div.appendChild(file);
@@ -188,6 +174,7 @@ function toggleFolder(elem) {
 let socket = io();
 
 socket.on("sendDirectory", function(receivingDirectory) {
+    localStorage.setItem("video", "");
     directory = receivingDirectory;
 
     if(debug) {
