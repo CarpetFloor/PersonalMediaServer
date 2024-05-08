@@ -1,4 +1,5 @@
 const debug = false;
+const showUnsupported = false;
 
 // Socket.IO
 const express = require("express");
@@ -33,24 +34,28 @@ function parseFolder() {
             }
             else {
                 if(!(file.includes("."))) {
-                    console.log("\nUNSUPORTED FILE FOUND - NO FILE TYPE (will be excluded from server directory)");
-                    console.log("....NAME: " + file);
-                    console.log("....IN FOLDER: " + folder);
-                    console.log("....FULL DIRECTORY: " + fullFilePath);
-                    console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
-                    console.log("--------------------");
+                    if(showUnsupported) {
+                        console.log("\nUNSUPORTED FILE FOUND - NO FILE TYPE (will be excluded from server directory)");
+                        console.log("....NAME: " + file);
+                        console.log("....IN FOLDER: " + folder);
+                        console.log("....FULL DIRECTORY: " + fullFilePath);
+                        console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
+                        console.log("--------------------");
+                    }
                 }
                 else {
                     let splitted = file.split(".");
                     let fileType = splitted[splitted.length - 1];
 
                     if(!(validFileTypes.includes(fileType))) {
-                        console.log("\nUNSUPORTED FILE FOUND (will be excluded from server directory)");
-                        console.log("....NAME: " + file);
-                        console.log("....IN FOLDER: " + folder);
-                        console.log("....FULL DIRECTORY: " + fullFilePath);
-                        console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
-                        console.log("--------------------");
+                        if(showUnsupported) {
+                            console.log("\nUNSUPORTED FILE FOUND (will be excluded from server directory)");
+                            console.log("....NAME: " + file);
+                            console.log("....IN FOLDER: " + folder);
+                            console.log("....FULL DIRECTORY: " + fullFilePath);
+                            console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
+                            console.log("--------------------");
+                        }
                     }
                     else {
                         directory.push(fullFilePath);
@@ -107,7 +112,7 @@ io.on("connection", (socket) => {
 });
 
 // start server
-const port = 8080;
+const port = 31415;
 // start server
 server.listen(port, () => {
     console.log("\nServer started on port " + port);
@@ -122,13 +127,28 @@ hound = require("hound");
 watcher = hound.watch("Media");
 
 watcher.on("create", function(file, stats) {
-  mediaModified = true;
+    try{
+        mediaModified = true;
+    }
+    catch(e) {
+        let unused = "unused";
+    }
 });
 watcher.on("change", function(file, stats) {
-  mediaModified = true;
+    try{
+        mediaModified = true;
+    }
+    catch(e) {
+        let unused = "unused";
+    }
 });
 watcher.on("delete", function(file) {
-  mediaModified = true;
+    try{
+        mediaModified = true;
+    }
+    catch(e) {
+        let unused = "unused";
+    }
 });
 
 // incase a bunch of changes made, don't spam user 

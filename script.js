@@ -142,7 +142,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     let file = document.createElement("p");
     file.style.textIndent = (currentLevel * indentSize) + "px";
     file.style.display = "none";
-    
+
     let icon = document.createElement("img");
     icon.classList.add("icon");
     icon.src = "Assets/fileIcon.svg";
@@ -172,7 +172,8 @@ videoRef.addEventListener( "loadedmetadata", function (e) {
         if(width > (window.innerWidth - padding)) {
             videoRef.style.width = (window.innerWidth - padding) + "px";
         }
-        else if(height > (window.innerHeight - padding)) {
+        
+        if(height > (window.innerHeight - padding)) {
             videoRef.style.height = (window.innerHeight - padding) + "px";
         }
     }
