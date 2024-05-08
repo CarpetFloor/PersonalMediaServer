@@ -1,4 +1,5 @@
-let debug = true;
+const debug = false;
+
 let navOpen = false;
 let navRef;
 
@@ -99,9 +100,6 @@ function addDiv(parent, name, currentLevel) {
 }
 
 function addFileToDiv(div, name, currentLevel, fullFilePath) {
-    // the name passed to this function has the filetype, so remove it for display
-    let nameSplitted = name.split(".");
-
     let file = document.createElement("p");
     file.style.textIndent = (currentLevel * INDENT_SIZE) + "px";
     file.style.display = "none";
@@ -111,7 +109,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     icon.src = "Assets/fileIcon.svg";
     file.appendChild(icon);
     
-    file.innerHTML += nameSplitted[0];
+    file.innerHTML += name;
 
     file.addEventListener("click", function(){
         let videoName = (file.innerText.split("."))[0];
@@ -138,8 +136,6 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 }
 
 function toggleNavMenu() {
-    // document.getElementById("video").style.display = "block";
-
     navOpen = !(navOpen);
 
     if(navOpen) {

@@ -24,11 +24,6 @@ body {
     background: #000000;
     color: white;
 }
-/*
-*:focus {
-    border: 2px solid #588dbe80;
-}
-*/
 
 #navToggle {
     outline: none;
@@ -87,4 +82,5 @@ body {
 video {
     outline: none;
     border-radius: 10px;
+    display: none;
 }
