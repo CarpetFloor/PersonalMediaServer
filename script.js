@@ -3,11 +3,16 @@ const debug = false;
 let navOpen = false;
 let navRef;
 let videoRef = document.querySelector("video");
+let firstSetup = false;
+// when directory gets resent, all folders get collapsed
+let openedFolders = [];
 
 function setupDirectory() {
     if(debug) {
         console.log("setting up directory...");
     }
+
+    document.getElementById("nav").innerHTML = "";
 
     let foldersCreated = [];
 
@@ -88,6 +93,10 @@ function mobileSetUp() {
     }
 
     document.body.style.display = "flex";
+    
+    if(debug) {
+        console.log("directory set up!");
+    }
 }
 
 const indentSize = 20;
@@ -255,8 +264,14 @@ socket.on("sendDirectory", function(receivingDirectory) {
         console.log(directory);
     }
     
-    navRef = document.getElementById("nav");
+    if(!(firstSetup)) {
+        navRef = document.getElementById("nav");
+    }
+    
     setupDirectory();
 
-    document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
+    if(!(firstSetup)) {
+        document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
+        firstSetup = true;
+    }
 });

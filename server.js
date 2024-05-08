@@ -1,3 +1,5 @@
+const debug = false;
+
 // Socket.IO
 const express = require("express");
 const app = express();
@@ -11,6 +13,7 @@ const fileReader = require("fs");
 let foldersToCheck = ["./Media/"];
 let directory = [];
 const validFileTypes = ["mp4", "webm", "ogg"];
+let alreadySetupDirectory = false;
 
 function parseFolder() {
     let folder = foldersToCheck[0];
@@ -62,12 +65,23 @@ function parseFolder() {
         parseFolder();
     }
     else {
-        console.log("\nDirectory set up!");
+        if(debug) {
+            console.log("\nDirectory set up!");
+        }
+
+        if(alreadySetupDirectory) {
+            io.emit("sendDirectory", directory);
+        }
     }
 }
 
 function setupDirectory() {
-    console.log("\nSetting up directory...");
+    if(debug) {
+        console.log("\nSetting up directory...");
+    }
+    
+    foldersToCheck = ["./Media/"];
+    directory = [];
     
     parseFolder();
 }
@@ -89,6 +103,7 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
     // when client connects to server send directory
     io.emit("sendDirectory", directory);
+    alreadySetupDirectory = true;
 });
 
 // start server
@@ -97,3 +112,34 @@ const port = 8080;
 server.listen(port, () => {
     console.log("\nServer started on port " + port);
 });
+
+// watch for changes in Media directory
+
+let mediaModified = false;
+
+hound = require("hound");
+
+watcher = hound.watch("Media");
+
+watcher.on("create", function(file, stats) {
+  mediaModified = true;
+});
+watcher.on("change", function(file, stats) {
+  mediaModified = true;
+});
+watcher.on("delete", function(file) {
+  mediaModified = true;
+});
+
+// incase a bunch of changes made, don't spam user 
+setInterval(function() {
+    if(mediaModified) {
+        if(debug) {
+            console.log("resending directory");
+        }
+        
+        mediaModified = false;
+
+        setupDirectory();
+    }
+}, 5000);

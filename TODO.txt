@@ -9,6 +9,7 @@ Server
     -Allow server Media directory to be modified without having to restart server
 
 Client
+-When directory resent, all folders get collapse, so reopen opened folders
 -Add support for photos
 -Animations
 -Mobile support
