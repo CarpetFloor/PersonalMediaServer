@@ -1,5 +1,4 @@
 Server
-    -Display where server is running at 
     -Add proper way to close shutdown server
     -Add server GUI for:
         >Installing dependencies
@@ -10,11 +9,7 @@ Server
     -Allow server Media directory to be modified without having to restart server
 
 Client
--Fix having to open unnecessary window at start
--Add support mkv videos
 -Add support for photos
 -Animations
--Skeleton loading
--Display more on homepage
 -Mobile support
 -Notify user if connection to server lost

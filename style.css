@@ -9,17 +9,24 @@
     --secondAccentColor: #f9a31b;
 }
 
-* {
-    margin: 0;
-    outline: none;
-    font-size: 1em;
-    font-family: "Quicksand", sans-serif;
+html {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 }
 
 body {
     background-color: var(--backgroundColor);
     color: var(--textLightColor);
     overflow: hidden;
+}
+
+* {
+    margin: 0;
+    outline: none;
+    font-size: 1em;
+    font-family: "Quicksand", sans-serif;
 }
 
 ::selection {
@@ -63,6 +70,7 @@ section {
     width: 93vw;
     height: 80vh;
     overflow: auto;
+    margin-top: 3em;
 }
 #nav p {
     color: var(--textLightColor);

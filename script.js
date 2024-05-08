@@ -47,18 +47,47 @@ function setupDirectory() {
             children[children.length - 1].style.display = "block";
         }
     }
+
+    mobileSetUp();
 }
 
-function checkIfNeedToPlayVideo() {
-    if(videoOpened == "yes") {
-        localStorage.setItem("videoOpened", "no");
+let mobile = false;
+let portrait = false;
+function mobileSetUp() {
+    mobile = (Math.max(window.innerWidth, window.innerHeight) < 1000);
 
-        document.getElementById("title").innerText = localStorage.getItem("videoName");
+    if(mobile) {
+        portrait = (window.innerHeight > window.innerWidth);
 
-        let videoRef = document.getElementById("video");
-        videoRef.style.display = "block";
-        videoRef.src = "/videoPlayer";
+        document.getElementById("navToggle").style.fontSize = "1em";
+
+        document.getElementById("title").style.fontSize = "1.35em";
+
+        if(portrait) {
+            document.querySelector("section").style.marginTop = "5vw";
+            document.querySelector("section").style.marginLeft = "5vw";
+        }
+        else {
+            document.querySelector("section").style.marginTop = "1vw";
+            document.querySelector("section").style.marginLeft = "1vw";
+        }
+
+        document.getElementById("nav").style.width = "85vw";
+        document.getElementById("nav").style.marginTop = "2.5em";
+
+        let files = document.getElementById("nav").getElementsByTagName("p");
+        for(let i = 0; i < files.length; i++) {
+            files[i].style.fontSize = "1em";
+            files[i].style.marginBottom = "1em";
+        }
+
+        if(!(portrait)) {
+            document.querySelector("video").style.marginLeft = "50vw";
+            document.querySelector("video").style.transform = "translateX(-50%)";
+        }
     }
+
+    document.body.style.display = "flex";
 }
 
 const indentSize = 20;
@@ -114,7 +143,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 
     file.addEventListener("click", function() {
         videoRef.style.display = "none";
-        
+
         toggleNavMenu();
         document.getElementById("title").innerText = name;
 
@@ -124,17 +153,43 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     div.appendChild(file);
 }
 
-const padding = 200;
+let padding = 200;
 // resize video if needed
 videoRef.addEventListener( "loadedmetadata", function (e) {
     let width = videoRef.videoWidth
     let height = videoRef.videoHeight;
 
-    if(width > (window.innerWidth - padding)) {
-        videoRef.style.width = (window.innerWidth - padding) + "px";
+    if(!(mobile)) {
+        if(width > (window.innerWidth - padding)) {
+            videoRef.style.width = (window.innerWidth - padding) + "px";
+        }
+        else if(height > (window.innerHeight - padding)) {
+            videoRef.style.height = (window.innerHeight - padding) + "px";
+        }
     }
-    else if(height > (window.innerHeight - padding)) {
-        videoRef.style.height = (window.innerHeight - padding) + "px";
+    else {
+        if(portrait) {
+            padding = 250;
+
+            if(height > (window.innerHeight - padding)) {
+                videoRef.style.height = (window.innerHeight - padding) + "px";
+            }
+            
+            padding = 50;
+            if(width > (window.innerWidth - padding)) {
+                videoRef.style.width = (window.innerWidth - padding) + "px";
+            }
+        }
+        else {
+            padding = 120;
+            if(height > (window.innerHeight - padding)) {
+                videoRef.style.height = (window.innerHeight - padding) + "px";
+            }
+            
+            else if(width > (window.innerWidth - padding)) {
+                videoRef.style.width = (window.innerWidth - padding) + "px";
+            }
+        }
     }
 
     videoRef.style.display = "flex";
@@ -193,7 +248,6 @@ function toggleFolder(elem) {
 let socket = io();
 
 socket.on("sendDirectory", function(receivingDirectory) {
-    localStorage.setItem("video", "");
     directory = receivingDirectory;
 
     if(debug) {
