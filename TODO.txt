@@ -17,3 +17,4 @@ Client
 -Skeleton loading
 -Display more on homepage
 -Mobile support
+-Notify user if connection to server lost

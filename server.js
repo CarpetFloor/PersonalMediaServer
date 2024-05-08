@@ -10,15 +10,17 @@ const io = new Server(server);
 const fileReader = require("fs");
 let foldersToCheck = ["./Media/"];
 let directory = [];
+const validFileTypes = ["mp4", "webm", "ogg"];
 
 function parseFolder() {
     let folder = foldersToCheck[0];
     foldersToCheck.shift();
     
     fileReader.readdirSync(folder).forEach(file => {
+        let fullFilePath = folder + file;
+
         if(file != ".gitignore") {
             // first check to see if the current file is a folder
-            let fullFilePath = folder + file;
             let fileIsFolder = fileReader.lstatSync(fullFilePath).isDirectory();
             
             if(fileIsFolder) {
@@ -27,7 +29,30 @@ function parseFolder() {
                 foldersToCheck.push(parsePath);
             }
             else {
-                directory.push(fullFilePath);
+                if(!(file.includes("."))) {
+                    console.log("\nUNSUPORTED FILE FOUND - NO FILE TYPE (will be excluded from server directory)");
+                    console.log("....NAME: " + file);
+                    console.log("....IN FOLDER: " + folder);
+                    console.log("....FULL DIRECTORY: " + fullFilePath);
+                    console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
+                    console.log("--------------------");
+                }
+                else {
+                    let splitted = file.split(".");
+                    let fileType = splitted[splitted.length - 1];
+
+                    if(!(validFileTypes.includes(fileType))) {
+                        console.log("\nUNSUPORTED FILE FOUND (will be excluded from server directory)");
+                        console.log("....NAME: " + file);
+                        console.log("....IN FOLDER: " + folder);
+                        console.log("....FULL DIRECTORY: " + fullFilePath);
+                        console.log("....SUPPORTED FILE TYPES: " + validFileTypes);
+                        console.log("--------------------");
+                    }
+                    else {
+                        directory.push(fullFilePath);
+                    }
+                }
             }
         }
     });
@@ -37,7 +62,7 @@ function parseFolder() {
         parseFolder();
     }
     else {
-        console.log("Directory set up!");
+        console.log("\nDirectory set up!");
     }
 }
 
