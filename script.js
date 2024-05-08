@@ -2,6 +2,7 @@ const debug = false;
 
 let navOpen = false;
 let navRef;
+let videoRef = document.querySelector("video");
 
 function setupDirectory() {
     if(debug) {
@@ -60,20 +61,20 @@ function checkIfNeedToPlayVideo() {
     }
 }
 
-const INDENT_SIZE = 20;
+const indentSize = 20;
 
 function addDiv(parent, name, currentLevel) {
     // div for the folder itself
     let div = document.createElement("div");
     div.id = name;
     div.style.flexDirection = "column";
-    div.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
+    div.style.textIndent = ((currentLevel - 1) * indentSize) + "px";
     
     // p element that will be the folder name
     let title = document.createElement("p");
     title.classList.add("folderName");
     title.style.fontWeight = "normal";
-    title.style.textIndent = ((currentLevel - 1) * INDENT_SIZE) + "px";
+    title.style.textIndent = ((currentLevel - 1) * indentSize) + "px";
     
     let icon = document.createElement("img");
     icon.classList.add("icon");
@@ -101,7 +102,7 @@ function addDiv(parent, name, currentLevel) {
 
 function addFileToDiv(div, name, currentLevel, fullFilePath) {
     let file = document.createElement("p");
-    file.style.textIndent = (currentLevel * INDENT_SIZE) + "px";
+    file.style.textIndent = (currentLevel * indentSize) + "px";
     file.style.display = "none";
     
     let icon = document.createElement("img");
@@ -111,15 +112,33 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     
     file.innerHTML += name;
 
-    file.addEventListener("click", function(){
-        document.querySelector("video").style.display = "none";
+    file.addEventListener("click", function() {
+        videoRef.style.display = "none";
+        
         toggleNavMenu();
-        document.querySelector("video").src = fullFilePath.slice(2);
-        document.querySelector("video").style.display = "flex";
+        document.getElementById("title").innerText = name;
+
+        videoRef.src = fullFilePath.slice(2);
     });
     
     div.appendChild(file);
 }
+
+const padding = 200;
+// resize video if needed
+videoRef.addEventListener( "loadedmetadata", function (e) {
+    let width = videoRef.videoWidth
+    let height = videoRef.videoHeight;
+
+    if(width > (window.innerWidth - padding)) {
+        videoRef.style.width = (window.innerWidth - padding) + "px";
+    }
+    else if(height > (window.innerHeight - padding)) {
+        videoRef.style.height = (window.innerHeight - padding) + "px";
+    }
+
+    videoRef.style.display = "flex";
+}, false );
 
 function toggleNavMenu() {
     navOpen = !(navOpen);

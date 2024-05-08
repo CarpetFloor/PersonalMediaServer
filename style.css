@@ -9,20 +9,30 @@
     --secondAccentColor: #f9a31b;
 }
 
-body {
-    padding: 2em;
-    background-color: var(--backgroundColor);
-    color: var(--textLightColor)
-}
 * {
     margin: 0;
     outline: none;
     font-size: 1em;
     font-family: "Quicksand", sans-serif;
 }
+
+body {
+    background-color: var(--backgroundColor);
+    color: var(--textLightColor);
+    overflow: hidden;
+}
+
 ::selection {
     background: #000000;
     color: white;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin-top: 5vh;
+    margin-left: 2vw;
 }
 
 #navToggle {
@@ -34,10 +44,12 @@ body {
     border-radius: 5px;
     font-weight: bold;
     font-size: 1.4em;
+    width: fit-content;
+    transition: all 0.2s;
 }
 #navToggle:hover {
     cursor: pointer;
-    filter: brightness(0.9);
+    filter: brightness(1.1);
 }
 
 #nav {
@@ -73,7 +85,7 @@ body {
 }
 
 #title {
-    font-size: 2.5em;
+    font-size: 2em;
     margin-top: 0.5em;
     margin-bottom: 0.25em;
     font-weight: bold;
