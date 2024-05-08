@@ -1,20 +1,12 @@
-let socket = io();
-let videoOpened = localStorage.getItem("videoOpened");
+let debug = true;
 let navOpen = false;
 let navRef;
-let directory = [];
-let checkIfVideoCanPlayInterval;
-
-socket.on("sendDirectory", function(receivingDirectory) {
-    directory = receivingDirectory;
-    
-    navRef = document.getElementById("nav");
-    setupDirectory();
-
-    document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
-});
 
 function setupDirectory() {
+    if(debug) {
+        console.log("setting up directory...");
+    }
+
     let foldersCreated = [];
 
     for(let i = 0; i < directory.length; i++) {
@@ -53,8 +45,6 @@ function setupDirectory() {
             children[children.length - 1].style.display = "block";
         }
     }
-
-    checkIfNeedToPlayVideo();
 }
 
 function checkIfNeedToPlayVideo() {
@@ -197,3 +187,20 @@ function toggleFolder(elem) {
         }
     }
 }
+
+// after HTML loaded and stuff here loaded, establish connection with server
+let socket = io();
+
+socket.on("sendDirectory", function(receivingDirectory) {
+    directory = receivingDirectory;
+
+    if(debug) {
+        console.log("Recieved diretory from server:");
+        console.log(directory);
+    }
+    
+    navRef = document.getElementById("nav");
+    setupDirectory();
+
+    document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
+});

@@ -85,11 +85,6 @@ body {
 }
 
 video {
-    /* max-width: 55vw;
-    min-width: 300px; */
-    min-width: 20vw;
-    max-width: 60vw;
     outline: none;
     border-radius: 10px;
-    display: none;
 }
