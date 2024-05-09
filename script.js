@@ -267,7 +267,6 @@ function createHTMLfolder(node, parent, level) {
      */
     for(let m = 0; m < modif.length; m++) {
         let splitted = ((modif[m][0]).split("/")).slice(2);
-        let fileName = splitted[splitted.length - 1];
         
         let check = "";
         for(let i = 0; i < splitted.length - 1; i++) {
@@ -427,8 +426,17 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
         toggleNavMenu();
         document.getElementById("title").innerText = name;
 
-        videoRef.src = fullFilePath.slice(2);
-        localStorage.setItem("videosrc", fullFilePath.slice(2));
+        let actualSrc = fullFilePath.slice(2);
+
+        // fix video src if directory path modified becasue duplicate name
+        for(let m = 0; m < modif.length; m++) {
+            if((modif[m][0]).slice(2) == actualSrc) {
+                actualSrc = (modif[m][1]).slice(2);
+            }
+        }
+
+        videoRef.src = actualSrc;
+        localStorage.setItem("videosrc", actualSrc);
     });
     
     div.appendChild(file);

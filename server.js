@@ -1,5 +1,5 @@
-const debugMode = true;
-const showUnsupported = true;
+const debugMode = false;
+const showUnsupported = false;
 
 // Socket.IO
 const express = require("express");
