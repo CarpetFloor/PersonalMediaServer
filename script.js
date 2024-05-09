@@ -489,7 +489,9 @@ socket.on("sendDirectory", function(receivingDirectory) {
     // restore diretory on page refresh
     if(localStorage.getItem("navOpen") != null) {
         if(localStorage.getItem("navOpen") == "true") {
-            toggleNavMenu();
+            if(window.getComputedStyle(navRef).display == "none") {
+                toggleNavMenu();
+            }
         }
         
         if(localStorage.getItem("openFolders") != null) {
@@ -501,7 +503,7 @@ socket.on("sendDirectory", function(receivingDirectory) {
             }
             
             for(let i = 0; i < splitted.length; i++) {
-                if(splitted[i].length > 0) {
+                if(!(openFolders.includes(splitted[i])) && (splitted[i].length > 0)) {
                     let elem = document.getElementById(splitted[i])
                     
                     if(elem != null) {

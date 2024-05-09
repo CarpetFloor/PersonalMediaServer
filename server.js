@@ -121,7 +121,6 @@ server.listen(port, () => {
 // watch for changes in Media directory
 
 let mediaModified = false;
-/*
 
 hound = require("hound");
 
@@ -151,17 +150,16 @@ watcher.on("delete", function(file) {
         let unused = "unused";
     }
 });
-*/
 
 // incase a bunch of changes made, don't spam user 
 setInterval(function() {
-    // if(mediaModified) {
-    // if(debug) {
-    //     console.log("resending directory");
-    // }
+    if(mediaModified) {
+        if(debug) {
+            console.log("resending directory");
+        }
     
-    mediaModified = false;
+        mediaModified = false;
 
-    // setupDirectory();
-    // }
-}, (10 * 1000));
+        setupDirectory();
+    }
+}, (5 * 1000));
