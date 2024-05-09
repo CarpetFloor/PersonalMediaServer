@@ -84,12 +84,13 @@ section {
     cursor: pointer;
     color: var(--accentColorLight);
 }
-#nav .folderName:hover {
+.folderName:hover {
     color: var(--secondAccentColor);
 }
-#nav .icon {
+.icon {
     width: 1em;
     margin-right: 0.25em;
+    user-select: none;
 }
 
 #title {

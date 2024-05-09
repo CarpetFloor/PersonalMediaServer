@@ -1,11 +1,84 @@
 const debug = false;
+const resumePlaying = false;
 
 let navOpen = false;
-let navRef;
+let navRef = document.getElementById("nav");
 let videoRef = document.querySelector("video");
-let firstSetup = false;
+videoRef.autoplay = false;
 // when directory gets resent, all folders get collapsed
 let openedFolders = [];
+document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
+
+// graph for storing directory data
+let dir = [];
+function FolderNode(name) {
+    this.name = name;
+    this.children = [];
+    this.html = null;
+    this.has = function(name) {
+        if(this.name == name) {
+            return true;
+        }
+
+        if(this.children.length > 0) {
+            for(let i = 0; i < this.children.length; i++) {
+                if((this.children[i].name == name) || (this.children[i].has(name))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    this.get = function(name) {
+        if(this.name == name) {
+            return this;
+        }
+
+        if(this.children.length > 0) {
+            for(let i = 0; i < this.children.length; i++) {
+                if(this.children[i].name == name) {
+                    return this.children[i];
+                }
+
+            }
+            for(let i = 0; i < this.children.length; i++) {
+                if(this.children[i].get(name) != null) {
+                    return this.children[i].get(name);
+                }
+            }
+        }
+
+        return null;
+    }
+}
+
+function FileNode(name, src) {
+    this.name = name;
+    this.src = src;
+    this.has = function(name) {return false;}
+    this.get = function(name) {return null;}
+}
+
+function dirHas(name) {
+    for(let i = 0; i < dir.length; i++) {
+        if(dir[i].has(name)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function dirGet(name) {
+    for(let i = 0; i < dir.length; i++) {
+        if(dir[i].get(name) != null) {
+            return dir[i].get(name);
+        }
+    }
+
+    return null;
+}
 
 function setupDirectory() {
     if(debug) {
@@ -14,46 +87,105 @@ function setupDirectory() {
 
     document.getElementById("nav").innerHTML = "";
 
-    let foldersCreated = [];
+    dir = [];
 
+    // generate graph
     for(let i = 0; i < directory.length; i++) {
-        let splitted = directory[i].split("/");
-        let folderName = splitted[splitted.length - 2];
-        let fileName = splitted[splitted.length - 1];
+        // slice(2) to remove . and Media directory because client directory starts at Media
+        const src = directory[i];
+        const splitted = src.split("/").slice(2);
+        const fileName = splitted[splitted.length - 1];
 
-        if(folderName != "Media") {
-            let parentFolder = document.getElementById(splitted[splitted.length - 3]);
-            
-            // the file is in a folder that does not yet exist
-            if(!(foldersCreated.includes(folderName))) {
-                foldersCreated.push(folderName);
-
-                if(splitted[splitted.length - 3] != "Media") {
-                    let newDiv = addDiv(parentFolder, folderName, splitted.length - 3);
-
-                    addFileToDiv(newDiv, fileName, splitted.length - 3, directory[i]);
-                }
-                else {
-                    let newDiv = addDiv(navRef, folderName, 1);
-
-                    addFileToDiv(newDiv, fileName, 1, directory[i]);
-                }
-            }
-            else {
-                let divFolder = document.getElementById(splitted[splitted.length - 2]);
-
-                addFileToDiv(divFolder, fileName, splitted.length - 3, directory[i]);
-            }
+        if(debug) {
+            console.log("----------");
+            console.log("----------");
+            console.log(i)
+            console.log("fileName", fileName);
+            console.log("src", src);
+            console.log("splitted", splitted);
         }
-        else {
-            addFileToDiv(navRef, fileName, 0, directory[i]);
+        
+        // first determine if file in a directory that hasn't been created client-side yet
+        if(splitted.length > 1) {
+            // go through each sub directory of directory and see if in graph
+            for(let i = 0; i < splitted.length - 1; i++) {
+                // sub directory not in graph, so have to add to graph
+                if(!(dirHas(splitted[i]))) {
+                    // if sub directory at same level as Media, can add at first level of graph
+                    if(i == 0) {
+                        dir.push(new FolderNode(splitted[0]));
+                    }
+                    
+                    /**
+                     * otherwise, find directory sub diretory is in by grabbing the graph node of 
+                     * previous sub directory
+                     */
+                    else {
+                        let nodeToAddTo = dirGet(splitted[i - 1]);
+                        
+                        // finally add sub directory to graph as a child of previous sub directory
+                        nodeToAddTo.children.push(new FolderNode(splitted[i]));
+                        
+                        if(debug) {
+                            console.log("ADD: " + splitted[i - 1] + ", ");
+                            console.log(nodeToAddTo);
+                        }
+                    }
+                }
+            }
 
-            let children = navRef.childNodes;
-            children[children.length - 1].style.display = "block";
+            // now insert file into graph
+            let directoryToAddFileTo = dirGet(splitted[splitted.length - 2]);
+            directoryToAddFileTo.children.push(new FileNode(fileName, src));
+        }
+        // add file at same level as Media
+        else {
+            dir.push(new FileNode(fileName, src))
         }
     }
 
+    if(debug) {
+        console.log("\n--");
+        console.log("--\n");
+        console.log("DIR");
+        console.log(dir);
+    }
+
+    generateHTMLfromGraph();
+
     mobileSetUp();
+}
+
+function createHTMLfolder(node, parent, level) {
+    // create folder itself
+    let folder = addFolder(parent, node.name, level);
+
+    // create children
+    for(let i = 0; i < node.children.length; i++) {
+        if(node.children[i].constructor.name == "FileNode") {
+            addFileToDiv(folder, node.children[i].name, (level  + 1), node.children[i].src);
+        }
+        else {
+            createHTMLfolder(node.children[i], folder, (level + 1));
+        }
+    }
+}
+
+function generateHTMLfromGraph() {
+    console.log("Generating HTML from graph...");
+    
+    for(let i = 0; i < dir.length; i++) {
+        // file
+        if(dir[i].constructor.name == "FileNode") {
+            addFileToDiv(navRef, dir[i].name, 0, dir[i].src);
+        }
+        // folder
+        else {
+            createHTMLfolder(dir[i], navRef, 0);
+        }
+    }
+
+    console.log("done");
 }
 
 let mobile = false;
@@ -101,18 +233,17 @@ function mobileSetUp() {
 
 const indentSize = 20;
 
-function addDiv(parent, name, currentLevel) {
+function addFolder(parent, name, currentLevel) {
     // div for the folder itself
     let div = document.createElement("div");
-    div.id = name;
     div.style.flexDirection = "column";
-    div.style.textIndent = ((currentLevel - 1) * indentSize) + "px";
+    div.style.textIndent = (currentLevel * indentSize) + "px";
     
     // p element that will be the folder name
     let title = document.createElement("p");
     title.classList.add("folderName");
     title.style.fontWeight = "normal";
-    title.style.textIndent = ((currentLevel - 1) * indentSize) + "px";
+    title.style.textIndent = (currentLevel * indentSize) + "px";
     
     let icon = document.createElement("img");
     icon.classList.add("icon");
@@ -123,7 +254,7 @@ function addDiv(parent, name, currentLevel) {
     
     title.addEventListener("click", function(){toggleFolder(this.parentNode);});
     
-    if(currentLevel == 1) {
+    if(currentLevel == 0) {
         div.style.display = "flex";
     }
     else {
@@ -143,6 +274,10 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     file.style.textIndent = (currentLevel * indentSize) + "px";
     file.style.display = "none";
 
+    if(currentLevel == 0) {
+        file.style.display = "block";
+    }
+
     let icon = document.createElement("img");
     icon.classList.add("icon");
     icon.src = "Assets/fileIcon.svg";
@@ -157,6 +292,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
         document.getElementById("title").innerText = name;
 
         videoRef.src = fullFilePath.slice(2);
+        localStorage.setItem("videosrc", fullFilePath.slice(2));
     });
     
     div.appendChild(file);
@@ -205,6 +341,32 @@ videoRef.addEventListener( "loadedmetadata", function (e) {
     videoRef.style.display = "flex";
 }, false );
 
+let currentTime = 0;
+
+// get current time of video when played, for setting local storage to get on refresh
+videoRef.addEventListener("timeupdate", function() {
+    currentTime = videoRef.currentTime;
+
+    localStorage.setItem("videoplaying", "true");
+    localStorage.setItem("videotime", videoRef.currentTime.toString());
+    
+    if(resumePlaying) {
+    }
+});
+
+// check if still playing video
+if(resumePlaying) {
+    window.setInterval(function() {
+        let timeCheck = videoRef.currentTime;
+        let playing = (!(timeCheck == currentTime));
+
+        localStorage.setItem("videoplaying", playing.toString());
+        if(playing) {
+            localStorage.setItem("videotime", videoRef.currentTime.toString());
+        }
+    }, 700);
+}
+
 function toggleNavMenu() {
     navOpen = !(navOpen);
 
@@ -225,10 +387,6 @@ function toggleFolder(elem) {
     
     let index = 1;
     let firstActualChild = children[1];
-    while(firstActualChild.nodeName == "DIV") {
-        ++index;
-        firstActualChild = children[index];
-    }
 
     let test = window.getComputedStyle(firstActualChild).display;
     let update = "-1";
@@ -265,14 +423,25 @@ socket.on("sendDirectory", function(receivingDirectory) {
         console.log(directory);
     }
     
-    if(!(firstSetup)) {
-        navRef = document.getElementById("nav");
-    }
-    
     setupDirectory();
 
-    if(!(firstSetup)) {
-        document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
-        firstSetup = true;
+    // when page refreshed, go back to last video and place
+    if(localStorage.getItem("videosrc") != null) {
+        videoRef.style.display = "none";
+
+        // toggleNavMenu();
+        document.getElementById("title").innerText = name;
+
+        videoRef.src = localStorage.getItem("videosrc");
+        
+        // go to previous time
+        videoRef.currentTime = parseFloat(localStorage.getItem("videotime"));
+
+        // if video was playing during page refresh resume video
+        if(resumePlaying) {
+            if(localStorage.getItem("videoplaying") == "true") {
+                videoRef.autoplay = true
+            }
+        }
     }
 });

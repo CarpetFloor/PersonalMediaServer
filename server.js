@@ -1,5 +1,5 @@
-const debug = false;
-const showUnsupported = false;
+const debug = true;
+const showUnsupported = true;
 
 // Socket.IO
 const express = require("express");
@@ -121,6 +121,7 @@ server.listen(port, () => {
 // watch for changes in Media directory
 
 let mediaModified = false;
+/*
 
 hound = require("hound");
 
@@ -150,16 +151,17 @@ watcher.on("delete", function(file) {
         let unused = "unused";
     }
 });
+*/
 
 // incase a bunch of changes made, don't spam user 
 setInterval(function() {
-    if(mediaModified) {
-        if(debug) {
-            console.log("resending directory");
-        }
-        
-        mediaModified = false;
+    // if(mediaModified) {
+    // if(debug) {
+    //     console.log("resending directory");
+    // }
+    
+    mediaModified = false;
 
-        setupDirectory();
-    }
-}, 5000);
+    // setupDirectory();
+    // }
+}, (10 * 1000));
