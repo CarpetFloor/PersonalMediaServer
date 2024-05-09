@@ -7,11 +7,13 @@ let videoRef = document.querySelector("video");
 videoRef.autoplay = false;
 // when directory gets resent, all folders get collapsed
 let openedFolders = [];
+let restoredFolders = false;
 document.getElementById("navToggle").addEventListener("click", toggleNavMenu);
 
 // graph for storing directory data
 let dir = [];
-function FolderNode(name) {
+function FolderNode(name, path) {
+    this.path = path;
     this.name = name;
     this.children = [];
     this.html = null;
@@ -108,12 +110,17 @@ function setupDirectory() {
         // first determine if file in a directory that hasn't been created client-side yet
         if(splitted.length > 1) {
             // go through each sub directory of directory and see if in graph
-            for(let i = 0; i < splitted.length - 1; i++) {
+            for(let j = 0; j < splitted.length - 1; j++) {
+                let path = "";
+                for(let a = 0; a < j + 1; a++) {
+                    path += splitted[a] + "/";
+                }
+
                 // sub directory not in graph, so have to add to graph
-                if(!(dirHas(splitted[i]))) {
+                if(!(dirHas(splitted[j]))) {
                     // if sub directory at same level as Media, can add at first level of graph
-                    if(i == 0) {
-                        dir.push(new FolderNode(splitted[0]));
+                    if(j == 0) {
+                        dir.push(new FolderNode(splitted[0], path));
                     }
                     
                     /**
@@ -121,13 +128,13 @@ function setupDirectory() {
                      * previous sub directory
                      */
                     else {
-                        let nodeToAddTo = dirGet(splitted[i - 1]);
+                        let nodeToAddTo = dirGet(splitted[j - 1]);
                         
                         // finally add sub directory to graph as a child of previous sub directory
-                        nodeToAddTo.children.push(new FolderNode(splitted[i]));
+                        nodeToAddTo.children.push(new FolderNode(splitted[j], path));
                         
                         if(debug) {
-                            console.log("ADD: " + splitted[i - 1] + ", ");
+                            console.log("ADD: " + splitted[j - 1] + ", ");
                             console.log(nodeToAddTo);
                         }
                     }
@@ -159,6 +166,7 @@ function setupDirectory() {
 function createHTMLfolder(node, parent, level) {
     // create folder itself
     let folder = addFolder(parent, node.name, level);
+    folder.id = node.path;
 
     // create children
     for(let i = 0; i < node.children.length; i++) {
@@ -172,7 +180,9 @@ function createHTMLfolder(node, parent, level) {
 }
 
 function generateHTMLfromGraph() {
-    console.log("Generating HTML from graph...");
+    if(debug) {
+        console.log("Generating HTML from graph...");
+    }
     
     for(let i = 0; i < dir.length; i++) {
         // file
@@ -185,7 +195,9 @@ function generateHTMLfromGraph() {
         }
     }
 
-    console.log("done");
+    if(debug) {
+        console.log("done");
+    }
 }
 
 let mobile = false;
@@ -370,6 +382,8 @@ if(resumePlaying) {
 function toggleNavMenu() {
     navOpen = !(navOpen);
 
+    localStorage.setItem("navOpen", navOpen.toString());
+
     if(navOpen) {
         navRef.style.display = "flex";
 
@@ -382,10 +396,11 @@ function toggleNavMenu() {
     }
 }
 
+let openFolders = [];
+
 function toggleFolder(elem) {
     let children = elem.childNodes;
     
-    let index = 1;
     let firstActualChild = children[1];
 
     let test = window.getComputedStyle(firstActualChild).display;
@@ -395,10 +410,19 @@ function toggleFolder(elem) {
     if(test == "none") {
         update = "block";
         divUpdate = "flex";
+        
+        if(restoredFolders) {
+            openFolders.push(elem.id);
+        }
     }
     else {
         update = "none";
         divUpdate = update;
+
+        if(restoredFolders) {
+            let removeIndex = openFolders.indexOf(elem.id);
+            openFolders.splice(removeIndex, 1);
+        }
     }
 
     for(let i = 1; i < children.length; i++) {
@@ -409,6 +433,21 @@ function toggleFolder(elem) {
         else {
             children[i].style.display = update;
         }
+    }
+
+    if(restoredFolders) {
+        let openFoldersStored = "";
+
+        for(let i = 0; i < openFolders.length; i++) {
+            openFoldersStored += openFolders[i] + "|";
+        }
+
+        if(debug) {
+            console.log("Open folders:");
+            console.log(openFolders);
+        }
+
+        localStorage.setItem("openFolders", openFoldersStored);
     }
 }
 
@@ -444,4 +483,36 @@ socket.on("sendDirectory", function(receivingDirectory) {
             }
         }
     }
+
+    openFolders = [];
+    
+    // restore diretory on page refresh
+    if(localStorage.getItem("navOpen") != null) {
+        if(localStorage.getItem("navOpen") == "true") {
+            toggleNavMenu();
+        }
+        
+        if(localStorage.getItem("openFolders") != null) {
+            let splitted = localStorage.getItem("openFolders").split("|");
+
+            if(debug) {
+                console.log("Local storage open folders:");
+                console.log(splitted);
+            }
+            
+            for(let i = 0; i < splitted.length; i++) {
+                if(splitted[i].length > 0) {
+                    let elem = document.getElementById(splitted[i])
+                    
+                    if(elem != null) {
+                        toggleFolder(elem);
+                        
+                        openFolders.push(splitted[i]);
+                    }
+                }
+            }
+        }
+    }
+    
+    restoredFolders = true;
 });
