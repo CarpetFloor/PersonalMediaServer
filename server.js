@@ -1,4 +1,4 @@
-const debug = true;
+const debugMode = true;
 const showUnsupported = true;
 
 // Socket.IO
@@ -70,7 +70,7 @@ function parseFolder() {
         parseFolder();
     }
     else {
-        if(debug) {
+        if(debugMode) {
             console.log("\nDirectory set up!");
         }
 
@@ -81,7 +81,7 @@ function parseFolder() {
 }
 
 function setupDirectory() {
-    if(debug) {
+    if(debugMode) {
         console.log("\nSetting up directory...");
     }
     
@@ -154,7 +154,7 @@ watcher.on("delete", function(file) {
 // incase a bunch of changes made, don't spam user 
 setInterval(function() {
     if(mediaModified) {
-        if(debug) {
+        if(debugMode) {
             console.log("resending directory");
         }
     

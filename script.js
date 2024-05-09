@@ -1,4 +1,4 @@
-const debug = false;
+const debug = true;
 const resumePlaying = false;
 
 let navOpen = false;
@@ -32,22 +32,38 @@ function FolderNode(name, path) {
 
         return false;
     }
-    this.get = function(name) {
-        if(this.name == name) {
+    this.get = function(path, index) {
+        if(debug) {
+            console.log("checking dirGet");
+            console.log(this.name, path[index], index, path);
+            console.log(this.name == path[index]);
+            console.log(this);
+        }
+
+        if((this.name == path[index]) && (index == path.length - 1)) {
+            console.log("FIRST PART");
             return this;
         }
 
         if(this.children.length > 0) {
             for(let i = 0; i < this.children.length; i++) {
-                if(this.children[i].name == name) {
-                    return this.children[i];
+                if(debug) {
+                    console.log("checking dirGet");
+                    console.log(this.children[i].name, path[index], index, path);
+                    console.log(this.children[i].name == path[index]);
                 }
 
-            }
-            for(let i = 0; i < this.children.length; i++) {
-                if(this.children[i].get(name) != null) {
-                    return this.children[i].get(name);
+                if(this.children[i].name == path[index]) {
+                    if(index == path.length - 1) {
+                        console.log("SECOND PART")
+                        return this.children[i];
+                    }
+                    else {
+                        console.log("GETTING CHILD")
+                        return this.children[i].get(path, (index + 1));
+                    }
                 }
+
             }
         }
 
@@ -72,10 +88,22 @@ function dirHas(name) {
     return false;
 }
 
-function dirGet(name) {
+function dirGet(path, index) {
     for(let i = 0; i < dir.length; i++) {
-        if(dir[i].get(name) != null) {
-            return dir[i].get(name);
+        
+        if(debug) {
+            console.log("checking dirGet");
+            console.log(dir[i].name, path[index], index, path);
+            console.log(dir[i].name == path[index]);
+        }
+
+        if(dir[i].name == path[index]) {
+            if(path.length == 1) {
+                return dir[i];
+            }
+            else {
+                return dir[i].get(path, (index + 1));
+            }
         }
     }
 
@@ -116,8 +144,24 @@ function setupDirectory() {
                     path += splitted[a] + "/";
                 }
 
+                let splitSend = [];
+                for(let a = 0; a < j + 1; a++) {
+                    splitSend.push(splitted[a]);
+                }
+
                 // sub directory not in graph, so have to add to graph
-                if(!(dirHas(splitted[j]))) {
+                let existCheck = dirGet(splitSend, 0);
+                
+                if(debug) {
+                    console.log("EXIST CHECK");
+                    console.log(existCheck);
+                }
+
+                if(existCheck == null) {
+                    if(debug) {
+                        console.log("NEED TO CREATE FOLDER");
+                    }
+                    
                     // if sub directory at same level as Media, can add at first level of graph
                     if(j == 0) {
                         dir.push(new FolderNode(splitted[0], path));
@@ -128,7 +172,21 @@ function setupDirectory() {
                      * previous sub directory
                      */
                     else {
-                        let nodeToAddTo = dirGet(splitted[j - 1]);
+                        splitSend.pop();
+                        
+                        if(debug) {
+                            console.log("UPDATED splitSend:");
+                            console.log(splitSend);
+                        }
+
+                        let nodeToAddTo = dirGet(splitSend, 0);;
+
+                        if(debug) {
+                            console.log("ARE WE EVER HERE");
+                            console.log("splitSend FOR FOLDER");
+                            console.log(splitSend);
+                            console.log(nodeToAddTo);
+                        }
                         
                         // finally add sub directory to graph as a child of previous sub directory
                         nodeToAddTo.children.push(new FolderNode(splitted[j], path));
@@ -142,8 +200,21 @@ function setupDirectory() {
             }
 
             // now insert file into graph
-            let directoryToAddFileTo = dirGet(splitted[splitted.length - 2]);
+            let splitSend = [];
+            for(let a = 0; a < splitted.length - 1; a++) {
+                splitSend.push(splitted[a]);
+            }
+            if(debug) {
+                console.log("splitSend");
+                console.log(splitSend);
+            }
+
+            let directoryToAddFileTo = dirGet(splitSend, 0);
             directoryToAddFileTo.children.push(new FileNode(fileName, src));
+            if(debug) {
+                console.log("INSERTING FILE INTO: ");
+                console.log(directoryToAddFileTo);
+            }
         }
         // add file at same level as Media
         else {
@@ -402,6 +473,14 @@ function toggleFolder(elem) {
     let children = elem.childNodes;
     
     let firstActualChild = children[1];
+    
+    if(debug) {
+        console.log("Children:");
+        console.log(children);
+        
+        console.log("First Actual Child:");
+        console.log(firstActualChild);
+    }
 
     let test = window.getComputedStyle(firstActualChild).display;
     let update = "-1";
