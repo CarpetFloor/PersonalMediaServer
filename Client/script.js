@@ -435,7 +435,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
             }
         }
 
-        videoRef.src = actualSrc;
+        videoRef.src = "../" + actualSrc;
         localStorage.setItem("videosrc", actualSrc);
     });
     
@@ -493,9 +493,6 @@ videoRef.addEventListener("timeupdate", function() {
 
     localStorage.setItem("videoplaying", "true");
     localStorage.setItem("videotime", videoRef.currentTime.toString());
-    
-    if(resumePlaying) {
-    }
 });
 
 // check if still playing video
@@ -685,10 +682,10 @@ socket.on("sendDirectory", function(receivingDirectory) {
         // toggleNavMenu();
         document.getElementById("title").innerText = name;
 
-        videoRef.src = localStorage.getItem("videosrc");
+        videoRef.src = "../" + localStorage.getItem("videosrc");
         
         // go to previous time
-        if(localStorage.getItem("videoTime") != null) {
+        if(localStorage.getItem("videotime") != null) {
             videoRef.currentTime = parseFloat(localStorage.getItem("videotime"));
 
             // if video was playing during page refresh resume video

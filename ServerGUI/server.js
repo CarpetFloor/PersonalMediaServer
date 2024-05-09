@@ -1,3 +1,4 @@
+module.exports.start = function() {
 const debugMode = false;
 const showUnsupported = false;
 
@@ -94,13 +95,10 @@ function setupDirectory() {
 setupDirectory();
 
 // use static files
-app.use(express.static(__dirname + "/Client"));
-app.use(express.static(__dirname + "/Assets"));
-app.use('/Media',  express.static(__dirname + '/Media'));
-// app.use("/Client",  express.static(__dirname + "/Client"));
+app.use(express.static(__dirname));
 // send index.html to client
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/Client/index.html");
+    res.sendFile(__dirname + "/index.html");
 });
 
 /**
@@ -173,4 +171,5 @@ process.on("uncaughtException", function(e) {
         console.log("uncaught exception:");
         console.log(e);
     }
-})
+});
+}
