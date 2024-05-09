@@ -1,3 +1,4 @@
+module.exports.start = function() {
 const debugMode = false;
 const showUnsupported = false;
 
@@ -173,4 +174,5 @@ process.on("uncaughtException", function(e) {
         console.log("uncaught exception:");
         console.log(e);
     }
-})
+});
+}

@@ -1,5 +1,5 @@
 const { app, BrowserWindow } = require("electron");
-const server = require("./server");
+const server = require("../server");
 
 const createWindow = () => {
   server.start();
