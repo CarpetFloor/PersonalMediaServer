@@ -163,3 +163,11 @@ setInterval(function() {
         setupDirectory();
     }
 }, (5 * 1000));
+
+// handle thrown error crashing server when empty folder deleted in Media
+process.on("uncaughtException", function(e) {
+    if(debugMode) {
+        console.log("uncaught exception:");
+        console.log(e);
+    }
+})
