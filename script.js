@@ -1,4 +1,4 @@
-const debug = true;
+const debug = false;
 const resumePlaying = false;
 
 let navOpen = false;
@@ -41,7 +41,10 @@ function FolderNode(name, path) {
         }
 
         if((this.name == path[index]) && (index == path.length - 1)) {
-            console.log("FIRST PART");
+            if(debug) {
+                console.log("FIRST PART");
+            }
+
             return this;
         }
 
@@ -55,11 +58,17 @@ function FolderNode(name, path) {
 
                 if(this.children[i].name == path[index]) {
                     if(index == path.length - 1) {
-                        console.log("SECOND PART")
+                        if(debug) {
+                            console.log("SECOND PART")
+                        }
+
                         return this.children[i];
                     }
                     else {
-                        console.log("GETTING CHILD")
+                        if(debug) {
+                            console.log("GETTING CHILD")
+                        }
+                        
                         return this.children[i].get(path, (index + 1));
                     }
                 }
@@ -90,7 +99,6 @@ function dirHas(name) {
 
 function dirGet(path, index) {
     for(let i = 0; i < dir.length; i++) {
-        
         if(debug) {
             console.log("checking dirGet");
             console.log(dir[i].name, path[index], index, path);
@@ -139,6 +147,10 @@ function setupDirectory() {
         if(splitted.length > 1) {
             // go through each sub directory of directory and see if in graph
             for(let j = 0; j < splitted.length - 1; j++) {
+                if(debug) {
+                    console.log(">>>>ITERATION " + j);
+                }
+
                 let path = "";
                 for(let a = 0; a < j + 1; a++) {
                     path += splitted[a] + "/";
@@ -147,6 +159,10 @@ function setupDirectory() {
                 let splitSend = [];
                 for(let a = 0; a < j + 1; a++) {
                     splitSend.push(splitted[a]);
+                }
+
+                if(debug) {
+                    console.log("splitSend is " + splitSend);
                 }
 
                 // sub directory not in graph, so have to add to graph
@@ -164,6 +180,11 @@ function setupDirectory() {
                     
                     // if sub directory at same level as Media, can add at first level of graph
                     if(j == 0) {
+                        if(debug) {
+                            console.log("----ACTUALLY ADD folder");
+                            console.log("ADDING AT BASE LEVEL");
+                        }
+
                         dir.push(new FolderNode(splitted[0], path));
                     }
                     
@@ -187,11 +208,12 @@ function setupDirectory() {
                             console.log(splitSend);
                             console.log(nodeToAddTo);
                         }
-                        
+
                         // finally add sub directory to graph as a child of previous sub directory
                         nodeToAddTo.children.push(new FolderNode(splitted[j], path));
                         
                         if(debug) {
+                            console.log("----ACTUALLY ADD folder");
                             console.log("ADD: " + splitted[j - 1] + ", ");
                             console.log(nodeToAddTo);
                         }
@@ -236,7 +258,38 @@ function setupDirectory() {
 
 function createHTMLfolder(node, parent, level) {
     // create folder itself
-    let folder = addFolder(parent, node.name, level);
+
+    let actualName = node.name;
+
+    /**
+     * check if folder name was modified because it is a duplicate, 
+     * and if so change back to original name
+     */
+    for(let m = 0; m < modif.length; m++) {
+        let splitted = ((modif[m][0]).split("/")).slice(2);
+        let fileName = splitted[splitted.length - 1];
+        
+        let check = "";
+        for(let i = 0; i < splitted.length - 1; i++) {
+            check += splitted[i] + "/";
+        }
+        
+        if(check == node.path) {
+            if(debug) {
+                console.log("FOUND MODIFIED DUPLICATE:");
+                console.log(node.path);
+            }
+
+            actualName = (((modif[m][1]).split("/")).slice(2))[splitted.length - 2];
+
+            if(debug) {
+                console.log("NAME SHOULD BE:");
+                console.log(actualName)
+            }
+        }
+    }
+
+    let folder = addFolder(parent, actualName, level);
     folder.id = node.path;
 
     // create children
@@ -533,8 +586,82 @@ function toggleFolder(elem) {
 // after HTML loaded and stuff here loaded, establish connection with server
 let socket = io();
 
+/**
+ * I cannot get multiple folders with the same name (but located at different 
+ * directories to properly work. So the solution is to have the actual data 
+ * representation of the directory modify duplicate folder names by adding a 
+ * unique number to the end of it. And keep track of which folders were changed 
+ * by the full path so can easily modify the front-end HTML to show the original 
+ * name.
+ */
+let modif = [];
+function filterOutDuplicates() {
+    for(let i = 0; i < directory.length; i++) {
+        let before = directory[i];
+        
+        let checked = [];
+        let splitted = directory[i].split("/");
+        let fileName = splitted[splitted.length - 1];
+        // remove . and Media
+        splitted.slice(2);
+        // remove file name - 2 files with the same name can't be in same directory
+        splitted.splice(splitted.length - 1, 1);
+
+        if(debug) {
+            console.log("----");
+            console.log("checking:");
+            console.log(splitted);
+        }
+
+        let foundDuplicate = false;
+        let addon = 1;
+
+        for(let j = 0; j < splitted.length; j++) {
+            if(checked.includes(splitted[j])) {
+                if(debug) {
+                    console.log("found duplicate: " + splitted[j]);
+                }
+                
+                splitted[j] += addon.toString();
+                ++addon;
+
+                foundDuplicate = true;
+            }
+            else {
+                checked.push(splitted[j]);
+            }
+        }
+
+        
+        if(foundDuplicate) {
+            let after = "";
+
+            for(let j = 0; j < splitted.length; j++) {
+                after += splitted[j] + "/";
+            }
+            after += fileName;
+
+            directory[i] = after;
+
+            modif.push([after, before])
+        }
+    }
+}
+
 socket.on("sendDirectory", function(receivingDirectory) {
     directory = receivingDirectory;
+    
+    if(debug) {
+        console.log("BEFORE:");
+        console.log(directory);
+    }
+    
+    filterOutDuplicates();
+    
+    if(debug) {
+        console.log("AFTER:");
+        console.log(directory);
+    }
 
     if(debug) {
         console.log("Recieved diretory from server:");
@@ -553,12 +680,14 @@ socket.on("sendDirectory", function(receivingDirectory) {
         videoRef.src = localStorage.getItem("videosrc");
         
         // go to previous time
-        videoRef.currentTime = parseFloat(localStorage.getItem("videotime"));
+        if(localStorage.getItem("videoTime") != null) {
+            videoRef.currentTime = parseFloat(localStorage.getItem("videotime"));
 
-        // if video was playing during page refresh resume video
-        if(resumePlaying) {
-            if(localStorage.getItem("videoplaying") == "true") {
-                videoRef.autoplay = true
+            // if video was playing during page refresh resume video
+            if(resumePlaying) {
+                if(localStorage.getItem("videoplaying") == "true") {
+                    videoRef.autoplay = true
+                }
             }
         }
     }
