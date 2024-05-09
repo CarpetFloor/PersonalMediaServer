@@ -2,7 +2,6 @@ Server
     -Fix server crashing when an empty directory is deleted in Media because of hound
     -Add proper way to close shutdown server
     -Add server GUI for:
-        >Installing dependencies
         >Starting server
         >Stopping server
         >Going to Media directory

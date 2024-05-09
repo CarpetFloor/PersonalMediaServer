@@ -2,20 +2,28 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
     <title>Hello from Electron renderer!</title>
+
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Hello from Electron renderer!</h1>
-    <p>👋</p>
-    <p id="info"></p>
+    <section class="controls">
+      <button id="toggle" onclick="toggle()">◼</button>
+
+      <button id="dir" onclick="goToMedia()">📁</button>
+    </section>
+
+    <div class="portContainer">
+      <p>Running on port: </p>
+      <p id="port">31415</p>
+    </div>
+
+    <section class="unsupported">
+      <h3>Unsupported Files</h3>
+      <div><button>📁</button><p>test</p></div>
+      <div><button>📁</button><p>another</p></div>
+    </section>
+
+    <script src="script.js"></script>
   </body>
-  <script src="./renderer.js"></script>
 </html>

@@ -1,1 +1,1 @@
-npm run gui;
+npm run gui
