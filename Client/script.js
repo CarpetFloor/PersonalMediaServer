@@ -366,19 +366,19 @@ function mobileSetUp() {
     }
 }
 
-const indentSize = 20;
+const indentSize = 15;
 
 function addFolder(parent, name, currentLevel) {
     // div for the folder itself
     let div = document.createElement("div");
     div.style.flexDirection = "column";
-    div.style.textIndent = (currentLevel * indentSize) + "px";
+    div.style.marginLeft = (currentLevel * indentSize) + "px";
     
     // p element that will be the folder name
     let title = document.createElement("p");
     title.classList.add("folderName");
     title.style.fontWeight = "normal";
-    title.style.textIndent = (currentLevel * indentSize) + "px";
+    // title.style.textIndent = (currentLevel * indentSize) + "px";
     
     let icon = document.createElement("img");
     icon.classList.add("icon");
@@ -404,23 +404,104 @@ function addFolder(parent, name, currentLevel) {
     return div;
 }
 
+let currentThumbnailInterval = null;
+
 function addFileToDiv(div, name, currentLevel, fullFilePath) {
     let file = document.createElement("p");
-    file.style.textIndent = (currentLevel * indentSize) + "px";
+    file.style.marginLeft = (currentLevel * (indentSize / 2)) + "px";
     file.style.display = "none";
+    file.style.flexDirection = "column";
+    file.style.alignItems = "flex-start";
+    file.className = "thumbnailClosed";
+ 
+    let topContainer = document.createElement("div");
+    topContainer.style.display = "flex";
+    topContainer.style.flexDirection = "row"
+    topContainer.style.alignItems = "flex-start";
 
     if(currentLevel == 0) {
-        file.style.display = "block";
+        file.style.display = "flex";
     }
 
     let icon = document.createElement("img");
     icon.classList.add("icon");
     icon.src = "Assets/fileIcon.svg";
-    file.appendChild(icon);
+    topContainer.appendChild(icon);
     
-    file.innerHTML += name;
+    let nameText = document.createElement("p");
+    nameText.innerText = name;
+    nameText.style.fontSize = "inherit";
+    nameText.style.marginLeft = "0";
+    topContainer.appendChild(nameText);
 
-    file.addEventListener("click", function() {
+    file.appendChild(topContainer);
+
+    let thumbnail = document.createElement("video");
+    thumbnail.id = fullFilePath;
+    thumbnail.preload = "metadata";
+    thumbnail.height = 0;
+    thumbnail.style.display = "flex";
+    thumbnail.style.marginLeft = "50px";
+
+    file.appendChild(thumbnail);
+
+    icon.addEventListener("click", function() {
+        if(file.className == "thumbnailOpen") {
+            file.className = "thumbnailClosed";
+        }
+        else {
+            file.className = "thumbnailOpen";
+        }
+        
+        let toRemove = document.getElementsByClassName("activeThumbnail");
+
+        // remove other open thumbnail
+        for(let i = 0; i < toRemove.length; i++) {
+            if(toRemove[i] != thumbnail) {
+                toRemove[i].removeAttribute("src");
+                toRemove[i].load();
+                toRemove[i].parentNode.className = "thumbnailClosed";
+                toRemove[i].height = 0;
+
+                window.clearInterval(currentThumbnailInterval);
+            }
+        }
+
+        if(file.className == "thumbnailOpen") {
+            thumbnail.className = "activeThumbnail";
+            thumbnail.src = fullFilePath;
+            thumbnail.load();
+        }
+        else {
+            thumbnail.className = "thumbnail";
+            thumbnail.removeAttribute("src");
+            thumbnail.load();
+            thumbnail.height = 0;
+
+            window.clearInterval(currentThumbnailInterval);
+        }
+    });
+
+    thumbnail.onloadedmetadata = function() {
+        let dur = Math.floor(thumbnail.duration);
+        let incr = Math.floor(dur / 10);
+        let cur = 0;
+
+        thumbnail.currentTime = incr;
+        
+        thumbnail.height = 120;
+
+        currentThumbnailInterval = window.setInterval(function(){
+            cur += incr;
+            thumbnail.currentTime = cur;
+
+            if(cur >= dur - Math.ceil(incr / 2)) {
+                cur = 0;
+            }
+        }, 900);
+    }
+
+    nameText.addEventListener("click", function() {
         videoRef.style.display = "none";
 
         toggleNavMenu();
@@ -546,7 +627,7 @@ function toggleFolder(elem) {
     let divUpdate = "-1";
 
     if(test == "none") {
-        update = "block";
+        update = "flex";
         divUpdate = "flex";
         
         if(restoredFolders) {
