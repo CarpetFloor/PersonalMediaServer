@@ -425,6 +425,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 
         toggleNavMenu();
         document.getElementById("title").innerText = name;
+        localStorage.setItem("videoname", name);
 
         let actualSrc = fullFilePath.slice(2);
 
@@ -676,11 +677,11 @@ socket.on("sendDirectory", function(receivingDirectory) {
     setupDirectory();
 
     // when page refreshed, go back to last video and place
-    if(localStorage.getItem("videosrc") != null) {
+    if(localStorage.getItem("videosrc") != null && localStorage.getItem("videoname") != null) {
         videoRef.style.display = "none";
 
         // toggleNavMenu();
-        document.getElementById("title").innerText = name;
+        document.getElementById("title").innerText = localStorage.getItem("videoname");
 
         videoRef.src = "../" + localStorage.getItem("videosrc");
         
