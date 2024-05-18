@@ -8,6 +8,5 @@ Server
         >Showing unsupported files in Media directory
 
 Client
--Add support for photos
 -Animations
 -Notify user if connection to server lost

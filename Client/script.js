@@ -456,8 +456,6 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
         let displayElem = parent.children[3];
 
         if(!(isPhoto)) {
-            console.log("SHOULD NOT BE HERE");
-
             if(file.className == "thumbnailOpen") {
                 file.className = "thumbnailClosed";
             }
@@ -538,6 +536,8 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
             localStorage.setItem("videosrc", actualSrc);
         }
         else {
+            document.getElementById("title").innerText = name;
+            
             displayElem.remove();
 
             let img = document.createElement("img");

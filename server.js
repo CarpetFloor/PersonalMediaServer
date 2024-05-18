@@ -121,7 +121,7 @@ io.on("connection", (socket) => {
 });
 
 // start server
-const port = 31415;
+const port = 8080;
 // start server
 server.listen(port, () => {
     console.log("\nServer started on port " + port);
