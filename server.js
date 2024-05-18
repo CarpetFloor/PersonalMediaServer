@@ -14,7 +14,12 @@ const io = new Server(server);
 const fileReader = require("fs");
 let foldersToCheck = ["./Media/"];
 let directory = [];
-const validFileTypes = ["mp4", "webm", "ogg"];
+const validFileTypes = [
+    // videos
+    "mp4", "webm", "ogg", 
+    // photos
+    "png", "jpg"
+];
 let alreadySetupDirectory = false;
 
 function parseFolder() {
