@@ -517,6 +517,12 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
         let tag = (displayElem.tagName).toLowerCase();
 
         if(!(isPhoto)) {
+            displayElem.remove();
+
+            let videoRef = document.createElement("video");
+            videoRef.controls = true;
+            parent.appendChild(videoRef);
+
             videoRef.style.display = "none";
 
             toggleNavMenu();
@@ -534,10 +540,65 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 
             videoRef.src = "../" + actualSrc;
             localStorage.setItem("videosrc", actualSrc);
+
+            let padding = 200;
+            // resize video if needed
+            videoRef.addEventListener( "loadedmetadata", function (e) {
+                let width = videoRef.videoWidth
+                let height = videoRef.videoHeight;
+
+                if(!(mobile)) {
+                    if(width > (window.innerWidth - padding)) {
+                        videoRef.style.width = (window.innerWidth - padding) + "px";
+                    }
+                    
+                    if(height > (window.innerHeight - padding)) {
+                        videoRef.style.height = (window.innerHeight - padding) + "px";
+                    }
+                }
+                else {
+                    if(portrait) {
+                        padding = 250;
+
+                        if(height > (window.innerHeight - padding)) {
+                            videoRef.style.height = (window.innerHeight - padding) + "px";
+                        }
+                        
+                        padding = 50;
+                        if(width > (window.innerWidth - padding)) {
+                            videoRef.style.width = (window.innerWidth - padding) + "px";
+                        }
+                    }
+                    else {
+                        padding = 120;
+                        if(height > (window.innerHeight - padding)) {
+                            videoRef.style.height = (window.innerHeight - padding) + "px";
+                        }
+                        
+                        else if(width > (window.innerWidth - padding)) {
+                            videoRef.style.width = (window.innerWidth - padding) + "px";
+                        }
+                    }
+                }
+
+                videoRef.style.display = "flex";
+            }, false );
+
+            let currentTime = 0;
+
+            // get current time of video when played, for setting local storage to get on refresh
+            videoRef.addEventListener("timeupdate", function() {
+                currentTime = videoRef.currentTime;
+
+                localStorage.setItem("videoplaying", "true");
+                localStorage.setItem("videotime", videoRef.currentTime.toString());
+            });
         }
         else {
             document.getElementById("title").innerText = name;
             
+            toggleNavMenu();
+
             displayElem.remove();
 
             let img = document.createElement("img");
@@ -590,59 +651,6 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     
     div.appendChild(file);
 }
-
-let padding = 200;
-// resize video if needed
-videoRef.addEventListener( "loadedmetadata", function (e) {
-    let width = videoRef.videoWidth
-    let height = videoRef.videoHeight;
-
-    if(!(mobile)) {
-        if(width > (window.innerWidth - padding)) {
-            videoRef.style.width = (window.innerWidth - padding) + "px";
-        }
-        
-        if(height > (window.innerHeight - padding)) {
-            videoRef.style.height = (window.innerHeight - padding) + "px";
-        }
-    }
-    else {
-        if(portrait) {
-            padding = 250;
-
-            if(height > (window.innerHeight - padding)) {
-                videoRef.style.height = (window.innerHeight - padding) + "px";
-            }
-            
-            padding = 50;
-            if(width > (window.innerWidth - padding)) {
-                videoRef.style.width = (window.innerWidth - padding) + "px";
-            }
-        }
-        else {
-            padding = 120;
-            if(height > (window.innerHeight - padding)) {
-                videoRef.style.height = (window.innerHeight - padding) + "px";
-            }
-            
-            else if(width > (window.innerWidth - padding)) {
-                videoRef.style.width = (window.innerWidth - padding) + "px";
-            }
-        }
-    }
-
-    videoRef.style.display = "flex";
-}, false );
-
-let currentTime = 0;
-
-// get current time of video when played, for setting local storage to get on refresh
-videoRef.addEventListener("timeupdate", function() {
-    currentTime = videoRef.currentTime;
-
-    localStorage.setItem("videoplaying", "true");
-    localStorage.setItem("videotime", videoRef.currentTime.toString());
-});
 
 // check if still playing video
 if(resumePlaying) {
@@ -849,6 +857,59 @@ socket.on("sendDirectory", function(receivingDirectory) {
                     }
                 }
             }
+
+            let padding = 200;
+            // resize video if needed
+            videoRef.addEventListener( "loadedmetadata", function (e) {
+                let width = videoRef.videoWidth
+                let height = videoRef.videoHeight;
+
+                if(!(mobile)) {
+                    if(width > (window.innerWidth - padding)) {
+                        videoRef.style.width = (window.innerWidth - padding) + "px";
+                    }
+                    
+                    if(height > (window.innerHeight - padding)) {
+                        videoRef.style.height = (window.innerHeight - padding) + "px";
+                    }
+                }
+                else {
+                    if(portrait) {
+                        padding = 250;
+
+                        if(height > (window.innerHeight - padding)) {
+                            videoRef.style.height = (window.innerHeight - padding) + "px";
+                        }
+                        
+                        padding = 50;
+                        if(width > (window.innerWidth - padding)) {
+                            videoRef.style.width = (window.innerWidth - padding) + "px";
+                        }
+                    }
+                    else {
+                        padding = 120;
+                        if(height > (window.innerHeight - padding)) {
+                            videoRef.style.height = (window.innerHeight - padding) + "px";
+                        }
+                        
+                        else if(width > (window.innerWidth - padding)) {
+                            videoRef.style.width = (window.innerWidth - padding) + "px";
+                        }
+                    }
+                }
+
+                videoRef.style.display = "flex";
+            }, false );
+
+            let currentTime = 0;
+
+            // get current time of video when played, for setting local storage to get on refresh
+            videoRef.addEventListener("timeupdate", function() {
+                currentTime = videoRef.currentTime;
+
+                localStorage.setItem("videoplaying", "true");
+                localStorage.setItem("videotime", videoRef.currentTime.toString());
+            });
         }
         else {
             document.getElementById("title").innerText = localStorage.getItem("videoname");
