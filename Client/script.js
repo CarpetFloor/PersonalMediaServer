@@ -514,145 +514,7 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     }
 
     nameText.addEventListener("click", function() {
-        clearOpenedFileFromDir();
-        
-        openedFile = getFileForIndicator(fullFilePath);
-        addOpenedIndicator();
-
-        let displayElem = parent.children[3];
-        let tag = (displayElem.tagName).toLowerCase();
-
-        if(!(isPhoto)) {
-            displayElem.remove();
-
-            let videoRef = document.createElement("video");
-            videoRef.controls = true;
-            parent.appendChild(videoRef);
-
-            videoRef.style.display = "none";
-
-            toggleNavMenu();
-            document.getElementById("title").innerText = name;
-            localStorage.setItem("videoname", name);
-
-            let actualSrc = fullFilePath.slice(2);
-
-            // fix video src if directory path modified becasue duplicate name
-            for(let m = 0; m < modif.length; m++) {
-                if((modif[m][0]).slice(2) == actualSrc) {
-                    actualSrc = (modif[m][1]).slice(2);
-                }
-            }
-
-            videoRef.src = "../" + actualSrc;
-            localStorage.setItem("videosrc", actualSrc);
-
-            let padding = 200;
-            // resize video if needed
-            videoRef.addEventListener( "loadedmetadata", function (e) {
-                let width = videoRef.videoWidth
-                let height = videoRef.videoHeight;
-
-                if(!(mobile)) {
-                    if(width > (window.innerWidth - padding)) {
-                        videoRef.style.width = (window.innerWidth - padding) + "px";
-                    }
-                    
-                    if(height > (window.innerHeight - padding)) {
-                        videoRef.style.height = (window.innerHeight - padding) + "px";
-                    }
-                }
-                else {
-                    if(portrait) {
-                        padding = 250;
-
-                        if(height > (window.innerHeight - padding)) {
-                            videoRef.style.height = (window.innerHeight - padding) + "px";
-                        }
-                        
-                        padding = 50;
-                        if(width > (window.innerWidth - padding)) {
-                            videoRef.style.width = (window.innerWidth - padding) + "px";
-                        }
-                    }
-                    else {
-                        padding = 120;
-                        if(height > (window.innerHeight - padding)) {
-                            videoRef.style.height = (window.innerHeight - padding) + "px";
-                        }
-                        
-                        else if(width > (window.innerWidth - padding)) {
-                            videoRef.style.width = (window.innerWidth - padding) + "px";
-                        }
-                    }
-                }
-
-                videoRef.style.display = "flex";
-            }, false );
-
-            let currentTime = 0;
-
-            // get current time of video when played, for setting local storage to get on refresh
-            videoRef.addEventListener("timeupdate", function() {
-                currentTime = videoRef.currentTime;
-
-                localStorage.setItem("videoplaying", "true");
-                localStorage.setItem("videotime", videoRef.currentTime.toString());
-            });
-        }
-        else {
-            document.getElementById("title").innerText = name;
-            
-            toggleNavMenu();
-
-            displayElem.remove();
-
-            let img = document.createElement("img");
-            img.src = fullFilePath;
-            img.style.display = "none";
-            
-            parent.appendChild(img);
-
-            // set the size of the image to fit the screen
-            let margin = 0.75;
-            if(mobile) {
-                margin = 0.9;
-            }
-            img.onload = function() {
-                let screenHorizontal = (window.innerWidth > window.innerHeight);
-
-                const ratio = img.width / img.height;
-                const changeX = 5;
-                const changeY = changeX / ratio;
-                let w = img.width;
-                let h = img.height;
-
-                while(
-                    (w > (window.innerWidth * margin)) || 
-                    (h > (window.innerHeight * margin))
-                ) {
-                    w -= changeX;
-                    h -= changeY;
-                }
-                
-                img.width = w;
-                img.height = h;
-
-                img.style.display = "flex";
-
-                let actualSrc = fullFilePath.slice(2);
-
-                // fix video src if directory path modified becasue duplicate name
-                for(let m = 0; m < modif.length; m++) {
-                    if((modif[m][0]).slice(2) == actualSrc) {
-                        actualSrc = (modif[m][1]).slice(2);
-                    }
-                }
-
-                localStorage.setItem("videosrc", actualSrc);
-                localStorage.setItem("videoname", name);
-            }
-        }
+        openFile(fullFilePath, isPhoto, name, div);
     });
     
     div.appendChild(file);
@@ -670,16 +532,248 @@ function getFileForIndicator(fullFilePath) {
     return thumbnail.parentNode;
 }
 
-function clearOpenedFileFromDir() {
+function clearOpenedFileIndicator() {
     if(openedFile != null) {
         openedFile.children[0].children[0].remove();
     }
 }
 
-function addOpenedIndicator() {
+function addOpenedFileIndicator() {
     let elem = openedFile.children[0].children[0];
     let icon = `<img class="iconVertical openIndicator" src="Assets/arrowRight.svg">`;
     elem.insertAdjacentHTML("beforebegin", icon);
+}
+
+let nextButton = document.getElementById("nextFileButton");
+let previousButton = document.getElementById("previousFileButton");
+let filesInCurrentDiv = [];
+
+function setupNextPreviousButtons(div) {
+    filesInCurrentDiv = [];
+
+    let actualLength = 0;
+    let pos = 0;
+
+    for(let i = 0; i < div.children.length; i++) {
+        if(div.children[i].tagName == "P") {
+            // determine position of openedFile
+            if(div.children[i] == openedFile) {
+                pos = actualLength;
+            }
+
+            // determine file count
+            let classes = [...div.children[i].classList];
+
+            if(!(classes.includes("folderName"))) {
+                ++actualLength;
+
+                filesInCurrentDiv.push(div.children[i]);
+            }
+        }
+    }
+
+    previousButton.style.opacity = "0.5";
+    previousButton.style.pointerEvents = "none";
+    previousButton.style.filter = "grayscale(1) brightness(0.85)";
+
+    nextButton.style.opacity = "0.5";
+    nextButton.style.pointerEvents = "none";
+    nextButton.style.filter = "grayscale(1) brightness(0.85)";
+
+    if(pos > 0) {
+        previousButton.style.opacity = "1";
+        previousButton.style.pointerEvents = "auto";
+        previousButton.style.filter = "none";
+    }
+
+    if(pos < actualLength - 1) {
+        nextButton.style.opacity = "1";
+        nextButton.style.pointerEvents = "auto";
+        nextButton.style.filter = "none";
+    }
+}
+
+let openingFromNextPrevious = false;
+
+previousButton.addEventListener("click", function(){
+    nextPreviousOpenFile(-1)
+});
+
+nextButton.addEventListener("click", function(){
+    nextPreviousOpenFile(1);
+});
+
+function nextPreviousOpenFile(offset) {
+    openingFromNextPrevious = true;
+
+    let index = filesInCurrentDiv.indexOf(openedFile) + offset;
+    let next = filesInCurrentDiv[index];
+
+    let fullFilePath = next.children[1].id;
+
+    let splitForFileType = fullFilePath.split(".");
+    let fileType = splitForFileType[splitForFileType.length - 1];
+    let isPhoto = photoTypes.includes(fileType);
+
+    let splittedForFileName = fullFilePath.split("/").slice(2);
+    let name = splittedForFileName[splittedForFileName.length - 1];
+
+    let div = next.parentNode;
+
+    openFile(fullFilePath, isPhoto, name, div);
+}
+
+function openFile(fullFilePath, isPhoto, name, div) {
+    clearOpenedFileIndicator();
+
+    let parent = document.querySelector("section");
+    
+    openedFile = getFileForIndicator(fullFilePath);
+    addOpenedFileIndicator();
+
+    let displayElem = parent.children[3];
+    let tag = (displayElem.tagName).toLowerCase();
+
+    if(!(isPhoto)) {
+        displayElem.remove();
+
+        let videoRef = document.createElement("video");
+        videoRef.controls = true;
+        parent.appendChild(videoRef);
+
+        videoRef.style.display = "none";
+
+        if(openingFromNextPrevious) {
+            openingFromNextPrevious = false;
+        }
+        else {
+            toggleNavMenu();
+        }
+
+        document.getElementById("title").innerText = name;
+        localStorage.setItem("videoname", name);
+
+        let actualSrc = fullFilePath.slice(2);
+
+        // fix video src if directory path modified becasue duplicate name
+        for(let m = 0; m < modif.length; m++) {
+            if((modif[m][0]).slice(2) == actualSrc) {
+                actualSrc = (modif[m][1]).slice(2);
+            }
+        }
+
+        videoRef.src = "../" + actualSrc;
+        localStorage.setItem("videosrc", actualSrc);
+
+        let padding = 200;
+        // resize video if needed
+        videoRef.addEventListener( "loadedmetadata", function (e) {
+            let width = videoRef.videoWidth
+            let height = videoRef.videoHeight;
+
+            if(!(mobile)) {
+                if(width > (window.innerWidth - padding)) {
+                    videoRef.style.width = (window.innerWidth - padding) + "px";
+                }
+                
+                if(height > (window.innerHeight - padding)) {
+                    videoRef.style.height = (window.innerHeight - padding) + "px";
+                }
+            }
+            else {
+                if(portrait) {
+                    padding = 250;
+
+                    if(height > (window.innerHeight - padding)) {
+                        videoRef.style.height = (window.innerHeight - padding) + "px";
+                    }
+                    
+                    padding = 50;
+                    if(width > (window.innerWidth - padding)) {
+                        videoRef.style.width = (window.innerWidth - padding) + "px";
+                    }
+                }
+                else {
+                    padding = 120;
+                    if(height > (window.innerHeight - padding)) {
+                        videoRef.style.height = (window.innerHeight - padding) + "px";
+                    }
+                    
+                    else if(width > (window.innerWidth - padding)) {
+                        videoRef.style.width = (window.innerWidth - padding) + "px";
+                    }
+                }
+            }
+
+            videoRef.style.display = "flex";
+        }, false );
+        
+        // get current time of video when played, for setting local storage to get on refresh
+        videoRef.addEventListener("timeupdate", function() {
+            localStorage.setItem("videoplaying", "true");
+            localStorage.setItem("videotime", videoRef.currentTime.toString());
+        });
+    }
+    else {
+        document.getElementById("title").innerText = name;
+        
+        if(openingFromNextPrevious) {
+            openingFromNextPrevious = false;
+        }
+        else {
+            toggleNavMenu();
+        }
+
+        displayElem.remove();
+
+        let img = document.createElement("img");
+        img.src = fullFilePath;
+        img.style.display = "none";
+        
+        parent.appendChild(img);
+
+        // set the size of the image to fit the screen
+        let margin = 0.75;
+        if(mobile) {
+            margin = 0.9;
+        }
+        img.onload = function() {
+            let screenHorizontal = (window.innerWidth > window.innerHeight);
+
+            const ratio = img.width / img.height;
+            const changeX = 5;
+            const changeY = changeX / ratio;
+            let w = img.width;
+            let h = img.height;
+
+            while(
+                (w > (window.innerWidth * margin)) || 
+                (h > (window.innerHeight * margin))
+            ) {
+                w -= changeX;
+                h -= changeY;
+            }
+            
+            img.width = w;
+            img.height = h;
+
+            img.style.display = "flex";
+
+            let actualSrc = fullFilePath.slice(2);
+
+            // fix video src if directory path modified becasue duplicate name
+            for(let m = 0; m < modif.length; m++) {
+                if((modif[m][0]).slice(2) == actualSrc) {
+                    actualSrc = (modif[m][1]).slice(2);
+                }
+            }
+
+            localStorage.setItem("videosrc", actualSrc);
+            localStorage.setItem("videoname", name);
+        }
+    }
+
+    setupNextPreviousButtons(div);
 }
 
 // check if still playing video
@@ -869,7 +963,10 @@ socket.on("sendDirectory", function(receivingDirectory) {
         let isPhoto = photoTypes.includes(fileType);
 
         openedFile = getFileForIndicator(localStorage.getItem("videosrc"));
-        addOpenedIndicator();
+        addOpenedFileIndicator();
+
+        let openedFileDiv = openedFile.parentNode;
+        setupNextPreviousButtons(openedFileDiv);
 
         if(!(isPhoto)) {
             videoRef.style.display = "none";

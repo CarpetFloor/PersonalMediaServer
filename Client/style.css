@@ -7,6 +7,10 @@
     --accentColorLight: #249fde;
     --accentColorDark: #285cc4;
     --secondAccentColor: #f9a31b;
+
+    --borderRadius: 5px;
+
+    --delay: 0.2s;
 }
 
 html {
@@ -42,21 +46,53 @@ section {
     margin-left: 2vw;
 }
 
+section .fileNav {
+    display: flex;
+    flex-direction: row;
+    height: 2em;
+}
+section .fileNav .nextPrevious {
+    line-height: 0;
+    padding: 1em;
+    border: none;
+    outline: none;
+    border-radius: var(--borderRadius);
+    background-color: var(--accentColorDark);
+    font-weight: 500;
+    transition: all var(--delay);
+    opacity: 0;
+    pointer-events: none;
+}
+section .fileNav .nextPrevious:hover {
+    cursor: pointer;
+    box-shadow: 0 0 5px var(--accentColorDark);
+    margin-top: 0.15em;
+    margin-bottom: -0.15em;
+    scale: 1.035;
+}
+section .fileNav .nextPrevious:not(:last-of-type) {
+    margin-right: 1em;
+}
+
 #navToggle {
+    line-height: 0;
     outline: none;
     border: none;
     padding: 10px;
     background-color: var(--accentColorLight);
     color: var(--textDarkColor);
-    border-radius: 5px;
+    border-radius: var(--borderRadius);
     font-weight: bold;
     font-size: 1.4em;
     width: fit-content;
-    transition: all 0.2s;
+    margin-right: 2em;
+    transition: all var(--delay);
 }
 #navToggle:hover {
     cursor: pointer;
     filter: brightness(1.1);
+    scale: 1.02;
+    box-shadow: 0 0 10px var(--accentColorLight);
 }
 
 #nav {
