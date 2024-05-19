@@ -8,5 +8,8 @@ Server
         >Showing unsupported files in Media directory
 
 Client
+-If a file has been opened, indicate that in the directory next to the file
+-Add next and previous buttons to allow going to the next or previous photo in the current directory without having to open up the directory
+-Load photo thumbnails for all photos in directory
 -Animations
 -Notify user if connection to server lost

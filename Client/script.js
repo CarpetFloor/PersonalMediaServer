@@ -406,6 +406,7 @@ function addFolder(parent, name, currentLevel) {
 
 const photoTypes = ["png", "jpg"];
 let currentThumbnailInterval = null;
+let openedFile = null;
 
 function addFileToDiv(div, name, currentLevel, fullFilePath) {
     let file = document.createElement("p");
@@ -513,6 +514,11 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     }
 
     nameText.addEventListener("click", function() {
+        clearOpenedFileFromDir();
+        
+        openedFile = getFileForIndicator(fullFilePath);
+        addOpenedIndicator();
+
         let displayElem = parent.children[3];
         let tag = (displayElem.tagName).toLowerCase();
 
@@ -650,6 +656,30 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     });
     
     div.appendChild(file);
+}
+
+function getFileForIndicator(fullFilePath) {
+    let path = fullFilePath;
+    
+    let start = fullFilePath.substring(0, 2);
+    if(start != "./") {
+        path = "./" + fullFilePath;
+    }
+    
+    let thumbnail = document.getElementById(path);
+    return thumbnail.parentNode;
+}
+
+function clearOpenedFileFromDir() {
+    if(openedFile != null) {
+        openedFile.children[0].children[0].remove();
+    }
+}
+
+function addOpenedIndicator() {
+    let elem = openedFile.children[0].children[0];
+    let icon = `<img class="iconVertical openIndicator" src="Assets/arrowRight.svg">`;
+    elem.insertAdjacentHTML("beforebegin", icon);
 }
 
 // check if still playing video
@@ -837,6 +867,9 @@ socket.on("sendDirectory", function(receivingDirectory) {
         let splitForFileType = localStorage.getItem("videosrc").split(".");
         let fileType = splitForFileType[splitForFileType.length - 1];
         let isPhoto = photoTypes.includes(fileType);
+
+        openedFile = getFileForIndicator(localStorage.getItem("videosrc"));
+        addOpenedIndicator();
 
         if(!(isPhoto)) {
             videoRef.style.display = "none";
