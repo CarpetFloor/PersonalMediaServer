@@ -382,7 +382,8 @@ function addFolder(parent, name, currentLevel) {
     
     let icon = document.createElement("img");
     icon.classList.add("icon");
-    icon.src = "Assets/folderIcon.svg";
+    icon.src = "Assets/folder.png";
+    icon.style.scale = "1.1";
     title.appendChild(icon);
     
     title.innerHTML += name;
@@ -409,6 +410,10 @@ let currentThumbnailInterval = null;
 let openedFile = null;
 
 function addFileToDiv(div, name, currentLevel, fullFilePath) {
+    let splitForFileType = fullFilePath.split(".");
+    let fileType = splitForFileType[splitForFileType.length - 1];
+    let isPhoto = photoTypes.includes(fileType);
+
     let file = document.createElement("p");
     file.style.marginLeft = (currentLevel * (indentSize / 2)) + "px";
     file.style.display = "none";
@@ -427,7 +432,13 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
 
     let icon = document.createElement("img");
     icon.classList.add("icon");
-    icon.src = "Assets/fileIcon.svg";
+    if(isPhoto) {
+        icon.src = "Assets/picture.png";
+    }
+    else {
+        icon.src = "Assets/video.png";
+        icon.style.scale = "1.2";
+    }
     topContainer.appendChild(icon);
     
     let nameText = document.createElement("p");
@@ -446,10 +457,6 @@ function addFileToDiv(div, name, currentLevel, fullFilePath) {
     thumbnail.style.marginLeft = "50px";
 
     file.appendChild(thumbnail);
-
-    let splitForFileType = fullFilePath.split(".");
-    let fileType = splitForFileType[splitForFileType.length - 1];
-    let isPhoto = photoTypes.includes(fileType);
 
     let parent = document.querySelector("section");
 
@@ -809,6 +816,8 @@ function toggleNavMenu() {
 let openFolders = [];
 
 function toggleFolder(elem) {
+    let icon = elem.children[0].children[0];
+    
     let children = elem.childNodes;
     
     let firstActualChild = children[1];
@@ -832,6 +841,8 @@ function toggleFolder(elem) {
         if(restoredFolders) {
             openFolders.push(elem.id);
         }
+
+        icon.src = "Assets/folderOpen.png";
     }
     else {
         update = "none";
@@ -841,6 +852,8 @@ function toggleFolder(elem) {
             let removeIndex = openFolders.indexOf(elem.id);
             openFolders.splice(removeIndex, 1);
         }
+
+        icon.src = "Assets/folder.png";
     }
 
     for(let i = 1; i < children.length; i++) {

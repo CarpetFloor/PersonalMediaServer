@@ -75,6 +75,9 @@ section .fileNav .nextPrevious:not(:last-of-type) {
 }
 
 #navToggle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     line-height: 0;
     outline: none;
     border: none;
