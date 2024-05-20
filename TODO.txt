@@ -8,6 +8,18 @@ Server
         >Showing unsupported files in Media directory
 
 Client
--Load photo thumbnails for all photos in directory
+-Make initial page look prettier before page loads
+-Fix load animation too big and too far right on mobile devices
+-Make sure video scalling maintains aspect ratio
+-Make change directory and previous/ next buttons bigger on mobile
+-Automatically resize everything on phone orientation change (probably just refresh page)
+-Make photos and videos centered on screen on mobile
+-Fix photos not fiting vertically in mobile landscape mode
+-Make video z-index higher than canvas (loading animation)
+-Clear loading animation interval when not playing
+-Make loading animation stick around for a few seconds after video has loaded to avoid the short period where video isn't visible but loading animation is gone. Do so by a timeout, but set a var to timeout so can be cancelled incase another file is opened and is loading when timeout is called.
+-Download videos and play instead of streaming
+-Load photo thumbnails for all photos in opened directories
+-Load video thumbnails for all videos in opened directories
 -Animations
 -Notify user if connection to server lost
