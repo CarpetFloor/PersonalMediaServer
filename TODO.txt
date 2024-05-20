@@ -7,12 +7,13 @@ Server
     -Add server GUI for:
         >Starting server
         >Stopping server
-        >Changing port numbera
+        >Changing port number
         >Going to Media directory
         >Showing unsupported files in Media directory and able to go to each file in file explorer
 
 
-Client
+Client8th
+    -Remove loading animation video
     -Make initial page look prettier before page loads
     -Fix load animation too big and too far right on mobile devices
     -Make sure video scalling maintains aspect ratio
