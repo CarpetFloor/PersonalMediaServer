@@ -31,6 +31,7 @@ body {
     outline: none;
     font-size: 1em;
     font-family: "Quicksand", sans-serif;
+    user-select: none;
 }
 
 ::selection {
@@ -157,6 +158,8 @@ section .fileNav .nextPrevious:not(:last-of-type) {
     margin-top: 0.5em;
     margin-bottom: 0.25em;
     font-weight: bold;
+    user-select: text;
+    z-index: 1;
 }
 
 video {
@@ -168,4 +171,5 @@ video {
 canvas {
     margin-top: 2em;
     position: absolute;
+    z-index: 0;
 }
