@@ -8,4 +8,6 @@ https://www.flaticon.com/free-icon/clapperboard_10278992?term=video&page=1&posit
 https://www.flaticon.com/free-icon/folder_861317?term=folder&page=1&position=11&origin=search&related_id=861317
 -Folder open icon:
 https://www.flaticon.com/free-icon/folder_1383507?term=folder&page=1&position=6&origin=search&related_id=1383507
+-Navigation arrow icon:
+https://www.flaticon.com/free-icon-font/right_9841589?page=1&position=4&term=next&origin=search&related_id=9841589
 -All other icons created by me

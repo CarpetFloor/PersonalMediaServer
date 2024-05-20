@@ -804,16 +804,17 @@ function toggleNavMenu() {
     if(navOpen) {
         navRef.style.display = "flex";
 
-        document.getElementById("navToggle").innerText = "Close Directory";
+        document.getElementById("navToggle").children[1].innerText = "Close Directory";
     }
     else {
         navRef.style.display = "none";
 
-        document.getElementById("navToggle").innerText = "Open Directory";
+        document.getElementById("navToggle").children[1].innerText = "Open Directory";
     }
 }
 
 let openFolders = [];
+let dirToggled = true;
 
 function toggleFolder(elem) {
     let icon = elem.children[0].children[0];
@@ -1130,3 +1131,13 @@ socket.on("sendDirectory", function(receivingDirectory) {
     
     restoredFolders = true;
 });
+
+document.body.addEventListener("keydown", nextPreviousKeyControls);
+function nextPreviousKeyControls(e) {
+    if((e.key == "ArrowLeft") && (window.getComputedStyle(previousButton).pointerEvents == "auto")) {
+        nextPreviousOpenFile(-1)
+    }
+    else if((e.key == "ArrowRight") && (window.getComputedStyle(nextButton).pointerEvents == "auto")) {
+        nextPreviousOpenFile(1)
+    }
+}

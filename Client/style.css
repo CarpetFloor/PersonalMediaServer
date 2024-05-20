@@ -49,11 +49,15 @@ section {
 section .fileNav {
     display: flex;
     flex-direction: row;
-    height: 2em;
+    height: fit-content;
+    /* height: 2em; */
 }
 section .fileNav .nextPrevious {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     line-height: 0;
-    padding: 1em;
+    padding: 0.75em;
     border: none;
     outline: none;
     border-radius: var(--borderRadius);
@@ -62,6 +66,9 @@ section .fileNav .nextPrevious {
     transition: all var(--delay);
     opacity: 0;
     pointer-events: none;
+}
+section .fileNav .nextPrevious img {
+    scale: 1.5;
 }
 section .fileNav .nextPrevious:hover {
     cursor: pointer;
