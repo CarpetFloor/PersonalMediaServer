@@ -1,5 +1,5 @@
 Repository
--README.md
+:)
 
 Server
     -Fix server crashing when an empty directory is deleted in Media because of hound
@@ -12,7 +12,7 @@ Server
         >Showing unsupported files in Media directory and able to go to each file in file explorer
 
 
-Client8th
+Client
     -Remove loading animation video
     -Make initial page look prettier before page loads
     -Fix load animation too big and too far right on mobile devices
