@@ -1170,6 +1170,9 @@ socket.on("sendDirectory", function(receivingDirectory) {
             }
         }
     }
+    else {
+        animation.show = false;
+    }
 
     openFolders = [];
     
