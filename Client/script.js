@@ -547,7 +547,10 @@ function clearOpenedFileIndicator() {
 
 function addOpenedFileIndicator() {
     let elem = openedFile.children[0].children[0];
-    let icon = `<img class="iconVertical openIndicator" src="Assets/arrowRight.svg">`;
+    let icon = `<img class="iconVertical openIndicator" src="Assets/rightFilled.png" style="
+        scale: 0.75;
+        filter: invert(1);
+    ">`;
     elem.insertAdjacentHTML("beforebegin", icon);
 }
 
