@@ -1,3 +1,68 @@
+// set up loading animation first
+let loadAnimation = document.createElement("video");
+loadAnimation.src = "Assets/loading.mp4";
+loadAnimation.autoplay = true;
+const loadFrameRate = Math.ceil(1000 / 30);
+
+const c = document.querySelector("canvas");
+const r = c.getContext("2d");
+c.width = 500;
+c.height = 500;
+
+let animationInterval = null;
+const animationRadius = 65;
+let animation = {
+    show: true, 
+    radius: animationRadius, 
+    size: 20, 
+    angle: 0, 
+    rate: 0.12, 
+    // because 0, 0 is bottom-left, not center
+    centerOffset: (c.width / 2) - (animationRadius / 2)
+}
+
+function drawAnimation() {
+    if(animation.show) {
+        r.clearRect(0, 0, c.width, c.height);
+
+        for(let i = 0; i < 4; i++) {
+            let angleOffset = animation.angle - (i * 0.75);
+            r.fillStyle = "rgba(255, 255, 255, " + (1 - (i * 0.1)) + ")";
+
+            if(angleOffset > 0) {
+                let x = Math.cos(angleOffset) * animation.radius;
+                x += animation.centerOffset;
+                let y = Math.sin(angleOffset) * animation.radius;
+                y += animation.centerOffset;
+
+
+                r.beginPath();
+                r.arc(
+                    x, 
+                    y, 
+                    animation.size - (i * 1.75), 
+                    0, 
+                    2 * Math.PI
+                );
+
+                r.fill();
+            }
+        }
+
+        animation.angle += animation.rate;
+
+        if(animation.angle >= 360) {
+            animation.angle = 0;
+        }
+    }
+    else {
+        r.clearRect(0, 0, c.width, c.height);
+    }
+}
+window.setInterval(drawAnimation, 1000 / 30);
+
+let loadedFirstFile = false;
+
 const debug = false;
 const resumePlaying = false;
 
@@ -634,6 +699,8 @@ function nextPreviousOpenFile(offset) {
 }
 
 function openFile(fullFilePath, isPhoto, name, div) {
+    animation.show = true;
+
     clearOpenedFileIndicator();
 
     let parent = document.querySelector("section");
@@ -716,6 +783,7 @@ function openFile(fullFilePath, isPhoto, name, div) {
             }
 
             videoRef.style.display = "flex";
+            animation.show = false;
         }, false );
         
         // get current time of video when played, for setting local storage to get on refresh
@@ -768,6 +836,7 @@ function openFile(fullFilePath, isPhoto, name, div) {
             img.height = h;
 
             img.style.display = "flex";
+            animation.show = false;
 
             let actualSrc = fullFilePath.slice(2);
 
@@ -1046,6 +1115,7 @@ socket.on("sendDirectory", function(receivingDirectory) {
                 }
 
                 videoRef.style.display = "flex";
+                animation.show = false;
             }, false );
 
             let currentTime = 0;
@@ -1096,6 +1166,7 @@ socket.on("sendDirectory", function(receivingDirectory) {
                 img.height = h;
 
                 img.style.display = "flex";
+                animation.show = false;
             }
         }
     }

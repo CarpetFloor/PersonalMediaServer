@@ -1,4 +1,6 @@
 -Directory icon:
+https://www.flaticon.com/free-icon/data_4395880?term=directory&page=1&position=17&origin=search&related_id=4395880
+-Alt directory icon:
 https://www.flaticon.com/free-icon/directory_6919421?term=directory&page=1&position=6&origin=search&related_id=6919421
 -Picture icon:
 https://www.flaticon.com/free-icon/insert-picture-icon_16410?term=picture&page=1&position=6&origin=search&related_id=16410
@@ -12,5 +14,7 @@ https://www.flaticon.com/free-icon/folder_1383507?term=folder&page=1&position=6&
 https://www.flaticon.com/free-icon-font/right_10294925?page=1&position=16&term=next&origin=search&related_id=10294925
 -Opened file indicator icon:
 https://www.flaticon.com/free-icon-font/right_9841589?page=1&position=4&term=next&origin=search&related_id=9841589
+-Loading animatoin:
+https://www.flaticon.com/free-animated-icon/loading_11681521?term=loading&page=1&position=10&origin=search&related_id=11681521
 
 -All other icons created by me

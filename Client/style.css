@@ -164,3 +164,8 @@ video {
     border-radius: 10px;
     display: none;
 }
+
+canvas {
+    margin-top: 2em;
+    position: absolute;
+}
