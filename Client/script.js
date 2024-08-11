@@ -21,8 +21,11 @@ let animation = {
     centerOffset: (c.width / 2) - (animationRadius / 2)
 }
 
+let drawAnimationAlreadyHidden = false;
 function drawAnimation() {
     if(animation.show) {
+        c.style.display = "block";
+
         r.clearRect(0, 0, c.width, c.height);
 
         for(let i = 0; i < 4; i++) {
@@ -56,7 +59,7 @@ function drawAnimation() {
         }
     }
     else {
-        r.clearRect(0, 0, c.width, c.height);
+        c.style.display = "none";
     }
 }
 window.setInterval(drawAnimation, 1000 / 30);
@@ -744,7 +747,7 @@ function openFile(fullFilePath, isPhoto, name, div) {
 
         let padding = 200;
         // resize video if needed
-        videoRef.addEventListener( "loadedmetadata", function (e) {
+        videoRef.addEventListener("loadedmetadata", function (e) {
             let width = videoRef.videoWidth
             let height = videoRef.videoHeight;
 
